@@ -597,7 +597,14 @@ num of syscalls:  24
 [202, 35, 228, 281, 1, 47, 24, 16, 15, 271, 299, 46, 20, 318, 158, 17, 18, 14, 219, 186, 131, 56, 9, 128]
 ```
 
-其中 24 和 22 都只出现了一次，22 相较于 23，少了 `9` 号系统调用 [`mmap()`](http://man7.org/linux/man-pages/man2/mmap.2.html)，24 相较于 23，多了 `128` 号系统调用 [`re_sigtimewait()`](https://linux.die.net/man/2/rt_sigtimedwait)
+其中调用总数为 24 和 22 的情况**都只出现了一次**，22 相较于 23，少了 `9` 号系统调用 [`mmap()`](http://man7.org/linux/man-pages/man2/mmap.2.html)，24 相较于 23，多了 `128` 号系统调用 [`re_sigtimedwait()`](https://linux.die.net/man/2/rt_sigtimedwait)。并且，在总 21 次运行中，只有 **1 次未调用** `mmap()`，只有 **1 次调用**了 `rt_sigtimedwait()`。
+
+`mmap()` 是[一种内存映射文件的方法](https://www.cnblogs.com/huxiao-tee/p/4660352.html)，在 Nginx 服务器运行的时候，如果有访问网页的操作，应该会有该调用的产生，笔者并不知道为什么在这么多次试验当中，有一次没有调用 `mmap()`，但由于本次实验是寻找 Nginx 正常运行的时候，gVisor 会向 Host 发出的 system calls，那么 `mmap()` 理所应当的应该放入其中。
+
+`rt_sigtimedwait()` 会将进程暂停，直到接收到了指定的信号才会继续。笔者判断可能是在运行的时候系统或者是 gVisor 本身受到了一些资源上的影响。但该调用**并不是常态**，只有少数情况下才可能出现。
+
+综合来看，正常情况下(非常情况可能出现其他调用如 `rt_sigtimedwait()`)，除开 Nginx 启动和关闭时的系统调用外，Normal Running 状态下，一般有23个系统调用，调用的频率如下
 
 
 
+![](syscall_to_host.png)
