@@ -2,7 +2,44 @@
 
 Written by Tianyu from ZJU.
 
-[TOC]
+- [gVisor Setup](#gvisor-setup)
+  * [docker 安装](#docker 安装)
+    + [安装须知](#安装须知)
+      - [用户权限](#用户权限)
+      - [国内镜像设置](#国内镜像设置)
+    + [学习资料](#学习资料)
+  * [gVisor 安装](#gvisor 安装)
+    + [Download gVisor](#download-gvisor)
+    + [Install bazel](#install-bazel)
+    + [Build gVisor](#build-gvisor)
+    + [关于Docker的设置](#关于Docker的设置)
+    + [学习资料](#学习资料)
+    + [gVisor设置platform为kvm](#gVisor设置platform为kvm)
+    + [设置Debug参数](#设置Debug参数)
+- [gVisor Overview](#gvisor-overview)
+  * [Sandbox](#sandbox)
+  * [Sentry](#sentry)
+- [gVisor system calls](#gvisor-system-calls)
+  * [System Call Implementation](#system-call-implementation)
+    + [Linux Implementation](#linux-implementation)
+    + [gVisor Implementation](#gvisor-implementation)
+  * [Add a System Call To gVisor](#add-a-system-call-to-gvisor)
+    + [添加 syscall 的主要步骤](#添加 syscall 的主要步骤)
+    + [gVisor 关于 redirect syscall 的原理](#gvisor----redirect-syscall----)
+    + [添加调用函数名和调用号](#添加调用函数名和调用号)
+    + [定义调用函数](#定义调用函数)
+    + [添加构建项](#添加构建项)
+    + [测试](#测试)
+- [gVisor & Nginx](#gvisor---nginx)
+  * [Deployment](#deployment)
+  * [System calls from Nginx to gvisor](#system-calls-from-nginx-to-gvisor)
+  * [System calls from gvisor to Host](#system-calls-from-gvisor-to-host)
+    + [gVisor 的系统调用入口](#gVisor 的系统调用入口)
+    + [借用工具观察 System Call](#借用工具观察 System Call)
+
+
+
+
 
 ## gVisor Setup
 
