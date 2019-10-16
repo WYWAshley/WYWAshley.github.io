@@ -7,7 +7,7 @@ keywords: c, inline assemble, gdb
 
 ---
 
-# Linux-5.x 内核下 x86 内联汇编 Core Dumped 问题
+# x86 内联汇编 Core Dumped
 
 Written by Tianyu
 
@@ -51,3 +51,40 @@ Segmentation fault (core dumped)
 
 ### 问题描述
 
+首先是系统的一些信息
+
+* Operating System：Ubuntu 18.04.1
+* Kernel Version: Linux 5.0.0-31-generic
+* Machine: x86_64
+
+然后是遇到问题的具体描述
+
+> 在进行 c 语言内联汇编的时候，用 `gcc -m32` 进行跨平台编译，得到的可执行文件无法运行，会得到 `Segmentation fault (core dumped)`
+
+
+
+### 问题解决
+
+我和我的同事 [Simon](https://github.com/SimonSungm) 探讨了这个问题，他碰到过类似的情况，那个是在操作系统实验当中，由于 gcc 的版本问题，导致编译出的可执行文件无法正常运行。
+
+
+
+于是我查看了 gcc 的版本
+
+```shell
+$ gcc -v
+gcc version 8.3.0
+```
+
+已经是最新的版本了。
+
+
+
+接着我考虑用 gdb 去调试一下程序，看看到底是在哪一步出错了。
+
+```
+$ gcc -m32 -g -o time-asm time-asm.c
+$ gdb time-asm
+```
+
+在这里可能会遇到一个问题，就是如果 gdb 和 gcc 的版本不匹配，那么会导致代码连 main() 函数都无法运行到。
