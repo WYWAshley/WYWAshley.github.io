@@ -1,4 +1,14 @@
+---
+layout: post
+title: seccomp hand-on try
+categories: [Linux security, system call]
+description: a list to learn seccomp
+keywords: seccomp, system call, Linux
+---
+
 #  seccomp hand-on try
+
+Written by Tianyu from ZJU.
 
 2019-6-4
 
