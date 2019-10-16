@@ -1,19 +1,15 @@
-- name: Software Engineer Keywords
+- name: Coding Language
   keywords:
-      - Java
+      - C
       - C++
       - Python
-      - Design Patterns
+      - golang
+      - Rust
 
-- name: Mobile Developer Keywords
+- name: System Security
   keywords:
-      - Android
-      - Reverse Engineering
-
-- name: Windows Developer Keywords
-  keywords:
-      - Win32 SDK
-      - DuiLib
-      - WTL
-      - COM
-      - WinDbg
+      - Linux kernel
+      - gcc/g++/gdb
+      - llvm/clang
+      - Linux Namespace
+      - Ptrace/Seccomp
