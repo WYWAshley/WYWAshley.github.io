@@ -82,9 +82,41 @@ gcc version 8.3.0
 
 接着我考虑用 gdb 去调试一下程序，看看到底是在哪一步出错了。
 
-```
+```shell
 $ gcc -m32 -g -o time-asm time-asm.c
 $ gdb time-asm
 ```
 
-在这里可能会遇到一个问题，就是如果 gdb 和 gcc 的版本不匹配，那么会导致代码连 main() 函数都无法运行到。
+
+
+> 在这里可能会遇到一个问题，就是如果 gdb 和 gcc 的版本不匹配，那么会导致代码连 main() 函数都无法运行到。
+
+**对于这种情况，请读者自行配置匹配的 gcc, g++, gdb。我配置的是 gcc/g++ 8.3.0, gdb 8.3。**
+
+
+
+接下来进行调试
+
+```shell
+$ gcc -m32 -g -o time-asm time-asm.c 
+$ gdb time-asm 
+GNU gdb (GDB) 8.3
+......
+Reading symbols from time-asm...
+(gdb) b main
+Breakpoint 1 at 0x5c8: file time-asm.c, line 4.
+(gdb) r
+Starting program: /home/zty/dev/cfile/time-asm 
+
+Breakpoint 1, main () at time-asm.c:4
+4	int main() {
+(gdb) step
+8	    __asm__ __volatile__ (
+(gdb) step
+16	    t = localtime(&tt);
+(gdb) step
+
+Program received signal SIGSEGV, Segmentation fault.
+0x56555440 in localtime@plt ()
+```
+
