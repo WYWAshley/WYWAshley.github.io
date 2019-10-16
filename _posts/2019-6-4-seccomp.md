@@ -6,7 +6,7 @@ description: a list to learn seccomp
 keywords: seccomp, system call, Linux
 ---
 
-#  seccomp hand-on try
+#  Seccomp hand-on try
 
 Written by Tianyu from ZJU.
 
