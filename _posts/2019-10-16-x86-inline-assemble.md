@@ -33,7 +33,6 @@ int main() {
     printf("time: %d : %d : %d : %d : %d : %d\n", t->tm_year, t->tm_mon, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec);
     return 0;
 }
-
 ```
 
 逻辑很简单，获取系统时间，调用 `localtime()` 获取格式化的时间信息，然后输出。代码中利用 `__asm __volatile__ ()` 来实现内联汇编，这段汇编的作用如它上方的那段注释所示，就是调用第 13 号系统调用，并将返回值放到 `tt` 变量当中。
@@ -119,4 +118,6 @@ Breakpoint 1, main () at time-asm.c:4
 Program received signal SIGSEGV, Segmentation fault.
 0x56555440 in localtime@plt ()
 ```
+
+从调试结果可以看到，
 
