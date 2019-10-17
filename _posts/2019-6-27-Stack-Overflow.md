@@ -164,13 +164,13 @@ Here we take a short time to read the content inside the `code[]`.
 At first, let's take a look at the purpose of this code, and the registers we have to focus on.
 
 ```c
-		execve("/bin/sh", argv, 0);
-					|        |    |
-				  %ebx      %ecx  %edx
+        execve("/bin/sh", argv, 0);
+                   |        |    |
+                 %ebx      %ecx  %edx
 		
-		%eax -> store variables
-		%al  -> part of %eax, to select the type of system call
-		%esp -> the stack pionter
+        %eax -> store variables
+        %al  -> part of %eax, to select the type of system call
+        %esp -> the stack pionter
 ```
 
 The purpose of this code is to call the `execve` system call to start a `/bin/sh` shell.
