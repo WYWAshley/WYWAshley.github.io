@@ -11,7 +11,7 @@ keywords: c, inline assemble, gdb
 
 Written by Tianyu
 
-在做《庖丁解牛Linux内核分析》[^note1]第 4.3 节当中，有关于 c++ 内联汇编的代码，同时这段汇编代码要求用 `gcc -m32` 来编译，即跨平台编译，用这种方式编译的可执行文件，运行的结果是 `core dumped`。代码如下所示
+在做《庖丁解牛Linux内核分析》[^note]第 4.3 节当中，有关于 c++ 内联汇编的代码，同时这段汇编代码要求用 `gcc -m32` 来编译，即跨平台编译，用这种方式编译的可执行文件，运行的结果是 `core dumped`。代码如下所示
 
 ```c
 #include <stdio.h>
@@ -64,7 +64,7 @@ Segmentation fault (core dumped)
 
 ### 解决思路
 
-我和我的同事 [Simon](https://github.com/SimonSungm) 探讨了这个问题，他碰到过类似的情况，那个是在操作系统实验当中，由于 gcc 的版本问题，导致编译出的可执行文件无法正常运行。
+我和我的同事 **Simon**[^note]探讨了这个问题，他碰到过类似的情况，那个是在操作系统实验当中，由于 gcc 的版本问题，导致编译出的可执行文件无法正常运行。
 
 
 
@@ -217,7 +217,7 @@ time: 2019 : 9 : 17 : 18 : 51 : 30
 
 
 
-带着这个疑问我咨询了导师[申文博](http://wenboshen.org/)教授，他指出**内联汇编并不是标准的 c 语言写法，一般汇编语言会单独写成一个文件，若是一定要写内联汇编，那就要严格的按照相关的标准编写。**
+带着这个疑问我咨询了导师申文博[^note]教授，他指出**内联汇编并不是标准的 c 语言写法，一般汇编语言会单独写成一个文件，若是一定要写内联汇编，那就要严格的按照相关的标准编写。**
 
 
 
@@ -237,11 +237,9 @@ c 语言的内联汇编应该有非常严格的标准，为了操作方便而随
 
 ### 参考
 
-[^note1]: Here is the *text* of the **footnote**.
-
-
-
-
+[^note]: ”实验楼“参考信息：https://www.shiyanlou.com/courses/195/learning/.
+[^note]: SimonSungm, Master in Zhejiang University：https://simonsungm.github.io/about/.
+[^note]: Wenbo Shen, Professor at Zhejiang University: https://wenboshen.org/.
 
 
 
