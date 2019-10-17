@@ -7,7 +7,7 @@ keywords: c, inline assemble, gdb
 
 ---
 
-# x86 内联汇编 Core Dumped
+## x86 内联汇编 Core Dumped
 
 Written by Tianyu
 
