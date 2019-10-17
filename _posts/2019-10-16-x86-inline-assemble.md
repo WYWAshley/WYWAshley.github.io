@@ -11,7 +11,7 @@ keywords: c, inline assemble, gdb
 
 Written by Tianyu
 
-在做《庖丁解牛Linux内核分析》[^note1]第 4.3 节当中，有关于 c++ 内联汇编的代码，同时这段汇编代码要求用 `gcc -m32` 来编译，即跨平台编译，用这种方式编译的可执行文件，运行的结果是 `core dumped`。代码如下所示
+在做《庖丁解牛Linux内核分析》第 4.3 节实验[^note1]  的时候，有关于 c++ 内联汇编的代码，同时这段汇编代码要求用 `gcc -m32` 来编译，即跨平台编译，用这种方式编译的可执行文件，运行的结果是 `core dumped`。代码如下所示
 
 ```c
 #include <stdio.h>
@@ -130,11 +130,11 @@ Program received signal SIGSEGV, Segmentation fault.
 使用 `gcc -S` 命令可以生成汇编文件，查看两个汇编文件的代码之后，发现的不同如下所示
 
 ```assembly
-	// time.s				|	// time-asm.s
-	subl	$12, %esp		|	mov $0,%ebx
-	pushl	$0				|	mov $0xd,%eax
-	call	time@PLT		|	int $0x80
-	addl	$16, %esp		|
+     // time.s				|     // time-asm.s
+     subl	$12, %esp		|     mov $0,%ebx
+     pushl	$0				|     mov $0xd,%eax
+     call	time@PLT		|     int $0x80
+     addl	$16, %esp		|
 ```
 
 左边就是开辟新的 stack 空间，然后把 0 作为参数传入 `time()` 函数，最后再把 stack 顶部指针 %esp 归为原位。
@@ -184,8 +184,6 @@ ecx            0xffffce90          -12656
 edx            0xffffceb4          -12620
 ebx            0x0                 0
 eip            0x565555e2          0x565555e2 <main+57>
-eflags         0x246               [ PF ZF IF ]
-
 ```
 
 上述是 `time-asm.c` 编译的可执行文件在执行内联汇编前后的寄存器对比，执行前后，存储内容发生变化的是 eax，ebx，eip。
@@ -217,7 +215,7 @@ time: 2019 : 9 : 17 : 18 : 51 : 30
 
 
 
-带着这个疑问我咨询了导师申文博[^note3]教授，他指出**内联汇编并不是标准的 c 语言写法，一般汇编语言会单独写成一个文件，若是一定要写内联汇编，那就要严格的按照相关的标准编写。**
+带着这个疑问我咨询了导师申文博[^note3 ]教授，他指出**内联汇编并不是标准的 c 语言写法，一般汇编语言会单独写成一个文件，若是一定要写内联汇编，那就要严格的按照相关的标准编写。**
 
 
 
