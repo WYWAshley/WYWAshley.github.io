@@ -165,8 +165,8 @@ At first, let's take a look at the purpose of this code, and the registers we ha
 
 ```c
         execve("/bin/sh", argv, 0);
-                   |        |    |
-                 %ebx      %ecx  %edx
+                   |       |    |
+                 %ebx     %ecx  %edx
 		
         %eax -> store variables
         %al  -> part of %eax, to select the type of system call
