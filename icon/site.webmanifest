@@ -1,15 +1,15 @@
 {
-    "name": "ZTY Home",
-    "short_name": "ZTY Home",
+    "name": "",
+    "short_name": "",
     "icons": [
         {
-            "src": "/icon/android-chrome-192x192.png",
+            "src": "/icon/android-chrome-192x192.png?v=E6mJ48G7qW",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/icon/android-chrome-384x384.png",
-            "sizes": "384x384",
+            "src": "/icon/android-chrome-512x512.png?v=E6mJ48G7qW",
+            "sizes": "512x512",
             "type": "image/png"
         }
     ],
