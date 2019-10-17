@@ -5,3 +5,7 @@
 - name: 浙江大学网络空间安全学院
   url: https://icsr.zju.edu.cn/
   src: www
+
+- name: Favicon Generator
+  url: https://realfavicongenerator.net/
+  src: www
