@@ -1,4 +1,13 @@
+---
+layout: post
+title: Stack Overflow In Ubuntu 18.04
+categories: [Program Security, Attack]
+description: a thorough hand-on try on overflow attack
+keywords: stack overflow, function, Linux
+---
+
 # Stack Overflow In Ubuntu 18.04
+
 ### Followed the [*Seed Lab*](http://www.cis.syr.edu/~wedu/seed/Labs_16.04/Software/Buffer_Overflow/)
 
 This article is written by Tianyu Zhou in May, 2019. Most of the technics are from the seed lab provided by Dr Wenliang Du on his websites, so remember to notice his copyright.
