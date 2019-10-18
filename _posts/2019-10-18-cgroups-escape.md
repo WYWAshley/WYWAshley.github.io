@@ -20,7 +20,7 @@ Linux Control Group，也称位 cgroups，是用于监控、限制 process 资�
 
 > In Linux, cgroups are organized in a hierarchical structure where a set of cgroups are arranged in a tree. Each task (e.g., a thread) can only be associated with exactly one cgroup in one hierarchy, but can be a member of multiple cgroups in different hierarchies. Each hierarchy then has one or more subsystems attached to it, so that a resource controller can apply per-cgroup limits on specific system resources. With the hierarchical structure, the cgroups mechanism is able to limit the total amount of resources for a group of processes(e.g., a container).
 
-上述是关于 cgroup 的一个架构介绍，重要的有以下几点
+上述是关于 cgroup 的架构介绍，重要的有以下几点
 
 * 一个 cgroup 对应有一种 hierarchy
 * 一个 task 在同类 hierarchy 中只能对应一个 cgroup
@@ -55,6 +55,34 @@ Cgroup 相关的 resource controller 一共有四种
 ### Exploiting Strategies
 
 
+
+### Cases Reccurent
+
+> We use the Docker container to set the configuration of cgroups through the provided interfaces. Besides, Docker also ensures that containers are isolated through namespaces bydefault. 
+>
+> Especially, with the USER namespace enabled, the root user in a container is mapped to a non-privileged user on the host. Thus, the privileged operations within containers cannot affect the host kernel. Our case studies are conducted in such de-privileged containers.
+
+
+
+#### case 1: Exception Handling
+
+constrains
+
+* cpu core: 1
+* cpu share: 100%, 10%, 5%
+* pid limitation: None, 100, 50
+
+
+
+
+
+#### case 2
+
+#### case 3
+
+#### case 4
+
+#### case 5
 
 
 
