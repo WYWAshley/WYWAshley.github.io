@@ -109,7 +109,7 @@ int main()
 {
     while(1) {
         int pid = fork();
-        if(pid >0) {
+        if(pid > 0) {
             int i = 1 / 0;
             return 0;
         }
