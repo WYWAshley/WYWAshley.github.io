@@ -18,9 +18,23 @@ Linux Control Group，也称位 cgroups，是用于监控、限制 process 资�
 
 ### Cgroup Hierarchy and Controllers
 
+> In Linux, cgroups are organized in a hierarchical structure where a set of cgroups are arranged in a tree. Each task (e.g., a thread) can only be associated with exactly one cgroup in one hierarchy, but can be a member of multiple cgroups in different hierarchies. Each hierarchy then has one or more subsystems attached to it, so that a resource controller can apply per-cgroup limits on specific system resources. With the hierarchical structure, the cgroups mechanism is able to limit the total amount of resources for a group of processes(e.g., a container).
+
+上述是关于 cgroup 的一个架构介绍，重要的有以下几点
+
+* 一个 cgroup 对应有一种 hierarchy
+* 一个 task 在同类 hierarchy 中只能对应一个 cgroup
+* 一个 task 可以有多个 cgroups
+* resource controller 按照 cgroup 来进行具体资源的管控
 
 
 
+Cgroup 相关的 resource controller 一共有四种
+
+* cpu controller：在多个 cgroup 竞争 cpu 资源的时候，按照 cpu share 的值来按比例分配 cpu 资源，也可以通过设定 *quota* 和 *period* 来限制在固定周期内的 cpu 使用量
+* cpusets controller：将 task 限制在具体的 cpu core 和 memory node 上
+* blkio controller：控制和限制对于块设备的访问，可以通过设定 *blkio.weight* 来划分占用比例，也可以通过设置具体的上限
+* pid controller：为 container 设置 task number 上限，上限存放在 *pids.max* 中，当前的 task 数目统计放在 *pids.current* 中，一旦达到上线，所有的 fork 和 clone 操作都会被禁止
 
 
 
