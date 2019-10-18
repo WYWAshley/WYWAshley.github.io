@@ -87,6 +87,7 @@ $ docker run --cpuset-cpus="0" --cpus=0.9 --pids-limit=50 -v /home/zty/dev/cfile
 ```
 
 * 这里没有像论文里说的那样用 user namespace 来实现非 root，考虑后续实现
+*  https://docs.docker.com/engine/security/userns-remap/  参考这个
 
 讲解一下基本的参数，更多的参数说明请参考官方文档[^note5]
 
