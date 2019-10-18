@@ -1,7 +1,7 @@
 ---
 layout: post
 title: cgroup - Houdini's escape
-categories: [cgoup, Linux container, docker]
+categories: [cgroup, linux container, docker]
 description: a recurrent of the cgroup escaping paper
 keywords: cgroup, Docker, Linux container
 ---

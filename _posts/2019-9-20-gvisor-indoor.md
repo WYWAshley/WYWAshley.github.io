@@ -1,7 +1,7 @@
 ---
 layout: post
 title: gvisor 入门
-categories: [docker, Linux container]
+categories: [docker, linux container]
 description: a brief introduction to gvisor
 keywords: gvisor, system call, Linux
 ---
