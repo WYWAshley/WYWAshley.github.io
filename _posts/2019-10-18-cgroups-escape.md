@@ -92,7 +92,7 @@ $ docker run --cpuset-cpus="0" --cpus=0.9 --pids-limit=50 -v /home/zty/dev/cfile
 讲解一下基本的参数，更多的参数说明请参考官方文档[^note5]
 
 * *--cpuset-cpus* 指定了 container 运行在哪个 cpu core 上，可以指定单个或者多个
-* *--cpus* 指定了 container 可以使用 cpu 资源的上限，举例来说，上述语句里面的值为 0.9，那么 container 可以使用的 cpu 资源上限就是 10%，也可以用 * --cpu-period* 和 * --cpu-quota* 捆绑使用来[实现相同的功能]( https://docs.docker.com/engine/reference/run/#cpu-period-constraint )[^note6]
+* *--cpus* 指定了 container 可以使用 cpu 资源的上限，举例来说，上述语句里面的值为 0.9，那么 container 可以使用的 cpu 资源上限就是 10%，也可以用 *--cpu-period* 和 *--cpu-quota* 捆绑使用来[实现相同的功能]( https://docs.docker.com/engine/reference/run/#cpu-period-constraint )[^note6]
 * *--pids-limit* 指定了进程数目的上线，一旦超过这个上限，就会返回 *fork: Interrupted system call* 的错误信息
 * 剩下的 *-v* 是文件映射，为了执行在 Host 上编译生成的文件
 
