@@ -10,14 +10,14 @@ Extract this package in <code>&lt;web site&gt;/icon/</code>. If your site is <co
 
 Insert the following code in the `head` section of your pages:
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png?v=E6mJ48G7qW">
-    <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png?v=E6mJ48G7qW">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png?v=E6mJ48G7qW">
-    <link rel="manifest" href="/icon/site.webmanifest?v=E6mJ48G7qW">
-    <link rel="mask-icon" href="/icon/safari-pinned-tab.svg?v=E6mJ48G7qW" color="#5bbad5">
-    <link rel="shortcut icon" href="/icon/favicon.ico?v=E6mJ48G7qW">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon/favicon-16x16.png">
+    <link rel="manifest" href="/icon/site.webmanifest">
+    <link rel="mask-icon" href="/icon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/icon/favicon.ico">
     <meta name="msapplication-TileColor" content="#2b5797">
-    <meta name="msapplication-config" content="/icon/browserconfig.xml?v=E6mJ48G7qW">
+    <meta name="msapplication-config" content="/icon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 
 *Optional* - Check your favicon with the [favicon checker](https://realfavicongenerator.net/favicon_checker)
