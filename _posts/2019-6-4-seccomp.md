@@ -1,7 +1,7 @@
 ---
 layout: post
 title: seccomp hand-on try
-categories: [Linux security, system call]
+categories: [system call, Seccomp]
 description: a list to learn seccomp
 keywords: seccomp, system call, Linux
 ---

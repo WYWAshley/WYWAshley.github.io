@@ -1,3 +1,11 @@
+---
+layout: post
+title: sgroup - Houdini's escape
+categories: [cgoup, Linux container, Dokcer]
+description: a recurrent of the cgroup escaping paper
+keywords: cgroup, Docker, Linux container
+---
+
 ## Linux Control Groups Escaping - Houdini
 
 ### Introduction
@@ -22,4 +30,3 @@ Linux Control Group，也称位 cgroups，是用于监控、限制 process 资�
 
 [^note2]: Gao, Xing, et al. "Houdini’s Escape: Breaking the Resource Rein of Linux Control Groups." (2019).
 [^note3]: The 26th ACM Conference on Computer and Communications Security in **London, United Kingdom from November 11 to November 15, 2019**.
-
