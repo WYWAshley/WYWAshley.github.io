@@ -1,6 +1,6 @@
 ---
 layout: post
-title: sgroup - Houdini's escape
+title: cgroup - Houdini's escape
 categories: [cgoup, Linux container, Dokcer]
 description: a recurrent of the cgroup escaping paper
 keywords: cgroup, Docker, Linux container
@@ -15,6 +15,8 @@ Linux Control Group，也称位 cgroups，是用于监控、限制 process 资�
 本文介绍的就是一种 cgroup escaping 的方法，被作者称之为 Houdini’s Escape，[这篇论文](https://gzs715.github.io/pubs/HOUDINI_CCS19.pdf)[^note2] 被 [CCS 2019](https://www.sigsac.org/ccs/CCS2019/) 会议[^ note3] 录用。
 
 论文主要针对之前提到的子进程 cgroup 进行攻击，使得该子进程脱离父进程的 cgroup 类别，从而进行 ou-of-band 攻击，使得同一物理机上的其他 container 的运行受到影响，同时还可以获得更多的资源（超出它本应该获得的范围）。我撰写该 blog 的目的是在于复现该论文的 esacape 方法，同时总结这些方法的特性和推广的价值。
+
+### Cgroup Hierarchy and Controllers
 
 
 
