@@ -16,7 +16,7 @@ Linux Control Group，也称位 cgroups，是用于监控、限制 process 资�
 
 论文主要针对之前提到的子进程 cgroup 进行攻击，使得该子进程脱离父进程的 cgroup 类别，从而进行 ou-of-band 攻击，使得同一物理机上的其他 container 的运行受到影响，同时还可以获得更多的资源（超出它本应该获得的范围）。我撰写该 blog 的目的是在于复现该论文的 esacape 方法，同时总结这些方法的特性和推广的价值。
 
-### Cgroup Hierarchy and Controllers
+### Cgroups Hierarchy and Controllers
 
 > In Linux, cgroups are organized in a hierarchical structure where a set of cgroups are arranged in a tree. Each task (e.g., a thread) can only be associated with exactly one cgroup in one hierarchy, but can be a member of multiple cgroups in different hierarchies. Each hierarchy then has one or more subsystems attached to it, so that a resource controller can apply per-cgroup limits on specific system resources. With the hierarchical structure, the cgroups mechanism is able to limit the total amount of resources for a group of processes(e.g., a container).
 
@@ -35,6 +35,24 @@ Cgroup 相关的 resource controller 一共有四种
 * **cpusets controller**：将 task 限制在具体的 cpu core 和 memory node 上
 * **blkio controller**：控制和限制对于块设备的访问，可以通过设定 *blkio.weight* 来划分占用比例，也可以通过设置具体的上限
 * **pid controller**：为 container 设置 task number 上限，上限存放在 *pids.max* 中，当前的 task 数目统计放在 *pids.current* 中，一旦达到上线，所有的 fork 和 clone 操作都会被禁止
+
+
+
+### Cgroups Inheritance
+
+> One important feature of cgroups is that child processes inherit cgroups attributes from their parent processes. 
+
+子进程被创建时，会调用 fork() 或是 clone() 函数，一开始新创建的进程会 attach 到 root cgroup 上，在完成寄存器还有其他的进程环境拷贝之后，将会调用 cgroup 拷贝函数，将这个新创建的进程 attach 到创建它的父进程所属的 cgroups。
+
+> Particularly, the function attaches the task to its parent cgroups by recursively going through all cgroup subsystems. As a result, after the copying procedure, the child task inherits memberships to the exact same cgroups as its parent task.
+
+这个 cgroup 拷贝函数会把所有 cgroup subsystem 递归遍历一遍，最终实现将子进程的 cgroup 设置为和父进程完全一致。
+
+举例来说，如果 cpusets 资源控制器将父进程指定为 2 号 cpu core，那么创建的子进程也会被指定为只能在 2 号 cpu core 上面运行。同时，如果 cpu 资源控制器对父进程设置了 *quota* 和 *period*，那么新创建的子进程将会和父进程共享这些资源，即子进程和父进程的 cpu 使用量加起来不能超过 *quota*。
+
+
+
+### Exploiting Strategies
 
 
 
