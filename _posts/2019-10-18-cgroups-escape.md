@@ -83,7 +83,7 @@ Cgroup 相关的 resource controller 一共有四种
 docker run 语句如下
 
 ```shell
-$ docker run --cpuset-cpus="0" --cpus=0.9 --pids-limit=50 -v /home/zty/dev/cfile:/tmp/cfile --rm -it ubuntu
+$ docker run --cpuset-cpus="0" --cpus=0.1 --pids-limit=50 -v /home/zty/dev/cfile:/tmp/cfile --rm -it ubuntu
 ```
 
 * 这里没有像论文里说的那样用 user namespace 来实现非 root，考虑后续实现
@@ -92,7 +92,7 @@ $ docker run --cpuset-cpus="0" --cpus=0.9 --pids-limit=50 -v /home/zty/dev/cfile
 讲解一下基本的参数，更多的参数说明请参考官方文档[^note5]
 
 * *--cpuset-cpus* 指定了 container 运行在哪个 cpu core 上，可以指定单个或者多个
-* *--cpus* 指定了 container 可以使用 cpu 资源的上限，举例来说，上述语句里面的值为 0.9，那么 container 可以使用的 cpu 资源上限就是 10%，也可以用 *--cpu-period* 和 *--cpu-quota* 捆绑使用来[实现相同的功能]( https://docs.docker.com/engine/reference/run/#cpu-period-constraint )[^note6]
+* *--cpus* 指定了 container 可以使用 cpu 资源的上限，举例来说，上述语句里面的值为 0.1，那么 container 可以使用的 cpu 资源上限就是 10%，也可以用 *--cpu-period* 和 *--cpu-quota* 捆绑使用来[实现相同的功能]( https://docs.docker.com/engine/reference/run/#cpu-period-constraint )[^note6]
 * *--pids-limit* 指定了进程数目的上线，一旦超过这个上限，就会返回 *fork: Interrupted system call* 的错误信息
 * 剩下的 *-v* 是文件映射，为了执行在 Host 上编译生成的文件
 
@@ -105,20 +105,24 @@ $ docker run --cpuset-cpus="0" --cpus=0.9 --pids-limit=50 -v /home/zty/dev/cfile
 ```c
 #include <stdio.h>
 #include <unistd.h>
+#include<sys/wait.h> 
+#include<sys/types.h> 
 int main()
 {
     while(1) {
         int pid = fork();
-        if(pid > 0) {
+        if(pid == 0) {
             int i = 1 / 0;
             return 0;
         }
-    }   
+        // ignore the SIGCHLD signal
+        signal(SIGCHLD,SIG_IGN);
+    }
     return 0;
 }
 ```
 
-逻辑很简单，父进程在不停的循环执行 fork 操作，而成功生成的子进程则负责执行 *div 0* 操作引发 faults。具体产生的 fault 如下
+逻辑很简单，父进程在不停的循环执行 fork 操作，而成功生成的子进程则负责执行 *div 0* 操作引发 faults。其中 ignore `SIGCHLD  `信号的原因参考[这篇文章](https://tianyuzhou.top/2019/10/21/fork-in-c/)。具体产生的 fault 如下
 
 ```
 Floating point exception(core dumped)
@@ -126,29 +130,36 @@ Floating point exception(core dumped)
 
 将该文件编译好之后，可以尝试运行，但由于会不断的制造 fault，造成 Host 的 cpu 直接被占满，我在实验的时候根本就无法进行后续操作了，只能重启电脑。
 
-按照论文里面的说法，对于 Ubuntu 而言，处理这些 faults 的应用是 Apport，因此在我们执行这个程序的时候，Apport 进程将会大量产生，从而占满 cpu。
+按照论文里面的说法，对于 Ubuntu 而言，处理这些 faults 的应用是 *Apport*，因此在我们执行这个程序的时候，Apport 进程将会大量产生，从而占满 cpu。
 
 下面的是运行 top 命令对于该文件运行时的监控
 
 ```
-top - 01:51:50 up  1:15,  1 user,  load average: 13.21, 3.12, 1.67
-Tasks: 386 total,  52 running, 264 sleeping,   0 stopped,   0 zombie
-%Cpu0  : 83.8 us, 16.2 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
-%Cpu1  : 87.4 us, 12.6 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
-KiB Mem :  4012220 total,   940224 free,  1877100 used,  1194896 buff/cache
-KiB Swap:  1942896 total,  1928816 free,    14080 used.  1886840 avail Mem 
+top - 16:46:18 up  2:02,  1 user,  load average: 15.93, 4.08, 1.68
+Tasks: 470 total,  55 running, 319 sleeping,   0 stopped,   1 zombie
+%Cpu0  : 84.7 us, 15.3 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu1  : 93.2 us,  6.8 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu2  : 94.1 us,  5.9 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu3  : 92.2 us,  7.8 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu4  : 91.5 us,  8.5 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu5  : 89.9 us, 10.1 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu6  : 92.5 us,  7.5 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu7  : 91.2 us,  8.8 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu8  : 91.9 us,  8.1 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu9  : 92.2 us,  7.8 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu10 : 91.9 us,  8.1 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+%Cpu11 : 91.6 us,  8.4 sy,  0.0 ni,  0.0 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st
+KiB Mem : 16212396 total, 10905352 free,  3395860 used,  1911184 buff/cache
+KiB Swap:  2097148 total,  2097148 free,        0 used. 12426024 avail Mem 
 
-   PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
- 40242 root      20   0   98800  24256  11648 R   2.8  0.6   0:00.09 apport
- 40286 root      20   0   98800  24360  11752 R   2.8  0.6   0:00.09 apport
- 40288 root      20   0   98800  24392  11784 R   2.8  0.6   0:00.09 apport
- 40294 root      20   0   98800  24376  11768 R   2.8  0.6   0:00.09 apport
- 40290 root      20   0   98800  24452  11844 R   2.5  0.6   0:00.08 apport
- 40292 root      20   0   98800  24468  11860 R   2.5  0.6   0:00.08 apport
- 40342 root      20   0   98244  23092  11216 R   2.5  0.6   0:00.08 apport
- 40344 root      20   0   98244  23396  11256 R   2.5  0.6   0:00.08 apport
- 40350 root      20   0   98244  23280  11400 R   2.5  0.6   0:00.08 apport
- 40358 root      20   0   98244  23580  11444 R   2.5  0.6   0:00.08 apport 
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+ 7647 root      20   0    4372   1080   1008 R   8.9  0.0   0:01.63 pppp
+26842 root      20   0   98756  24208  11808 R   4.3  0.1   0:00.13 apport
+26847 root      20   0   98236  23900  11752 R   3.9  0.1   0:00.12 apport
+26852 root      20   0   98236  23004  11356 R   3.9  0.1   0:00.12 apport
+27400 root      20   0   98756  24316  11916 R   3.9  0.1   0:00.12 apport
+27403 root      20   0   98236  23268  11396 R   3.9  0.1   0:00.12 apport
+... lots of apport
 ```
 
 运行 top 命令之后按下数字键盘中的 1，可以分不同的 core 来展示 cpu 的使用量，上图是运行的一个截图，并不是稳定的值，只是 cpu 被无数个 apport 占满时的一个时刻的情况
@@ -156,11 +167,11 @@ KiB Swap:  1942896 total,  1928816 free,    14080 used.  1886840 avail Mem
 而此刻，我也用 *docker stats* 命令监视着容器的情况
 
 ```
-NAME                CPU %       MEM USAGE / LIMIT     MEM %    PIDS
-hardcore_knuth      6.97%       11.23MiB / 3.826GiB   0.29%    50
+NAME            CPU %      MEM USAGE / LIMIT     MEM %         PIDS
+nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 ```
 
-为了方便展示，我把 container ID，Net I/O，Block I/O 这些字段删除了，重点关注容器的 cpu 占用，我们发现短时间内 cpu 使用率为 7% 左右，也符合之前设定的 10% 以内，因此在这种情况下，其实是 Apport 这个 core dump application 占用了大量的 CPU。
+为了方便展示，我把 container ID，Net I/O，Block I/O 这些字段删除了，重点关注容器的 cpu 占用，我们发现短时间内 cpu 使用率为 10.66%，在持续观察的过程中，基本都在 10% 上下，也符合之前设定的 10% 以内，因此在这种情况下，其实是 Apport 这个 core dump application 占用了大量的 CPU。
 
 * 进一步的说明将在明天进行
 
