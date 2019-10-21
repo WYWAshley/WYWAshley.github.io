@@ -167,7 +167,7 @@ KiB Swap:  2097148 total,  2097148 free,        0 used. 12426024 avail Mem
 而此刻，我也用 *docker stats* 命令监视着容器的情况
 
 ```
-NAME            CPU %      MEM USAGE / LIMIT     MEM %         PIDS
+NAME            CPU %       MEM USAGE / LIMIT     MEM %         PIDS
 nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 ```
 
