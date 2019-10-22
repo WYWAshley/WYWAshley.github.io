@@ -1,99 +1,98 @@
 var seriesLabel = {
-    normal: {
-        show: true,
-        textBorderColor: '#333',
-        textBorderWidth: 2
-    }
+normal: {
+show: true,
+textBorderColor: '#333',
+textBorderWidth: 2
 }
-
+}
 option = {
-    title: {
-        text: 'CPU Utilization'
-    },
-    tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'shadow'
-        }
-    },
-    legend: {
-        data: ['Container Utilization', 'Host Utilization(100% for container)', 'Host Utilization(10% for container)', 'Host Utilization(5% for container)']
-    },
-    grid: {
-        left: 100
-    },
-    toolbox: {
-        show: true,
-        feature: {
-            saveAsImage: {}
-        }
-    },
-    xAxis: {
-        type: 'value',
-        name: '%',
-        axisLabel: {
-            formatter: '{value}'
-        }
-    },
-    yAxis: {
-        type: 'category',
-        inverse: true,
-        data: ['PID limit: no', 'PID limit: 100', 'PID limit: 50'],
-        axisLabel: {
-            formatter: function (value) {
-                return value;
-            },
-            margin: 20,
-            rich: {
-                value: {
-                    lineHeight: 30,
-                    align: 'center'
-                }
-            }
-        }
-    },
-    series: [
-        {
-            name: 'Container Utilization',
-            type: 'bar',
-            data: [0, 11.5, 15],
-            label: seriesLabel
-        },
-        {
-            name: 'Host Utilization(100% for container)',
-            type: 'bar',
-            label: seriesLabel,
-            data: [1200, 1200, 1200]
-        },
-        {
-            name: 'Container(10%)',
-            type: 'bar',
-            data: [0, 10.09, 10.38],
-            label: seriesLabel,
-            itemStyle: {
-                color: '#c23531'
-            }
-        },
-        {
-            name: 'Host Utilization(10% for container)',
-            type: 'bar',
-            label: seriesLabel,
-            data: [1200, 1200, 1200]
-        },
-        {
-            name: 'Container(5%)',
-            type: 'bar',
-            data: [0, 5.35, 5.13],
-            label: seriesLabel,
-            itemStyle: {
-                color: '#c23531'
-            }
-        },
-        {
-            name: 'Host Utilization(5% for container)',
-            type: 'bar',
-            label: seriesLabel,
-            data: [1200, 1200, 1200]
-        }
-    ]
+title: {
+text: 'CPU Utilization'
+},
+tooltip: {
+trigger: 'axis',
+axisPointer: {
+type: 'shadow'
+}
+},
+legend: {
+data: ['Container Utilization', 'Host Utilization(100% for container)', 'Host Utilization(10% for container)', 'Host Utilization(5% for container)']
+},
+grid: {
+left: 100
+},
+toolbox: {
+show: true,
+feature: {
+saveAsImage: {}
+}
+},
+xAxis: {
+type: 'value',
+name: '%',
+axisLabel: {
+formatter: '{value}'
+}
+},
+yAxis: {
+type: 'category',
+inverse: true,
+data: ['PID limit: no', 'PID limit: 100', 'PID limit: 50'],
+axisLabel: {
+formatter: function (value) {
+return value;
+},
+margin: 20,
+rich: {
+value: {
+lineHeight: 30,
+align: 'center'
+}
+}
+}
+},
+series: [
+{
+name: 'Container Utilization',
+type: 'bar',
+data: [0, 11.5, 15],
+label: seriesLabel
+},
+{
+name: 'Host Utilization(100% for container)',
+type: 'bar',
+label: seriesLabel,
+data: [1200, 1200, 1200]
+},
+{
+name: 'Container(10%)',
+type: 'bar',
+data: [0, 10.09, 10.38],
+label: seriesLabel,
+itemStyle: {
+color: '#c23531'
+}
+},
+{
+name: 'Host Utilization(10% for container)',
+type: 'bar',
+label: seriesLabel,
+data: [1200, 1200, 1200]
+},
+{
+name: 'Container(5%)',
+type: 'bar',
+data: [0, 5.35, 5.13],
+label: seriesLabel,
+itemStyle: {
+color: '#c23531'
+}
+},
+{
+name: 'Host Utilization(5% for container)',
+type: 'bar',
+label: seriesLabel,
+data: [1200, 1200, 1200]
+}
+]
 };
