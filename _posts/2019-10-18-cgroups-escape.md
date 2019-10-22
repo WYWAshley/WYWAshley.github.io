@@ -186,7 +186,92 @@ nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 
 创建一个新的 image 然后保存它，之后每次都可以用这个 container 来实验，因为 sysbench 要用好几次。
 
-<!-- 为ECharts准备一个具备大小（宽高）的Dom --><div id="container" style="width: 600px;height:400px;"></div><script type="text/javascript" src="js/dist/echarts.min.js"></script><script type="text/javascript" src="js/dist/echarts-gl.min.js"></script><script type="text/javascript" src="js/dist/ecStat.min.js"></script><script type="text/javascript" src="js/dist/extension/dataTool.min.js"></script><script type="text/javascript" src="js/dist/extension/bmap.min.js"></script><script type="text/javascript">var dom = document.getElementById("container");var myChart = echarts.init(dom);var app = {};option = null;var seriesLabel = {normal: {show: true,textBorderWidth: 2,position: 'right'},}option = {title: {text: 'CPU Utilization'},tooltip: {trigger: 'axis',axisPointer: {type: 'shadow'}},legend: {data: ['Container Utilization', 'Host Utilization(100% for container)', 'Host Utilization(10% for container)', 'Host Utilization(5% for container)']},grid: {left: 100},toolbox: {show: true,feature: {saveAsImage: {}}},xAxis: {type: 'value',name: '%',axisLabel: {formatter: '{value}'}},yAxis: {type: 'category',inverse: true,data: ['PID limit: no', 'PID limit: 100', 'PID limit: 50'],axisLabel: {formatter: function (value) {return value;},margin: 20,rich: {value: {lineHeight: 30,align: 'center'}}}},series: [{name: 'Container Utilization',type: 'bar',data: [0, 11.5, 15],label: seriesLabel},{name: 'Host Utilization(100% for container)',type: 'bar',label: seriesLabel,data: [1200, 1200, 1200]},{name: 'Container(10%)',type: 'bar',data: [0, 10.09, 10.38],label: seriesLabel,itemStyle: {color: '#c23531'}},{name: 'Host Utilization(10% for container)',type: 'bar',label: seriesLabel,data: [1200, 1200, 1200]},{name: 'Container(5%)',type: 'bar',data: [0, 5.35, 5.13],label: seriesLabel,itemStyle: {color: '#c23531'}},{name: 'Host Utilization(5% for container)',type: 'bar',label: seriesLabel,data: [1200, 1200, 1200]}]};if (option && typeof option === "object") {myChart.setOption(option, true);}</script>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="container" style="width: 600px;height:400px;"></div>
+<script type="text/javascript" src="/js/dist/echarts.min.js"></script>
+<script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
+<script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="/js/map/js/china.js"></script>
+<script type="text/javascript" src="/js/map/js/world.js"></script>
+<script type="text/javascript" src="/js/dist/extension/bmap.min.js"></script>
+<script type="text/javascript">
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
+app.title = '正负条形图';
+
+option = {
+    tooltip : {
+        trigger: 'axis',
+        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+        }
+    },
+    legend: {
+        data:['利润', '支出', '收入']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis : [
+        {
+            type : 'value'
+        }
+    ],
+    yAxis : [
+        {
+            type : 'category',
+            axisTick : {show: false},
+            data : ['周一','周二','周三','周四','周五','周六','周日']
+        }
+    ],
+    series : [
+        {
+            name:'利润',
+            type:'bar',
+            label: {
+                normal: {
+                    show: true,
+                    position: 'inside'
+                }
+            },
+            data:[200, 170, 240, 244, 200, 220, 210]
+        },
+        {
+            name:'收入',
+            type:'bar',
+            stack: '总量',
+            label: {
+                normal: {
+                    show: true
+                }
+            },
+            data:[320, 302, 341, 374, 390, 450, 420]
+        },
+        {
+            name:'支出',
+            type:'bar',
+            stack: '总量',
+            label: {
+                normal: {
+                    show: true,
+                    position: 'left'
+                }
+            },
+            data:[-120, -132, -101, -134, -190, -230, -210]
+        }
+    ]
+};
+;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+</script>
 
 #### Case 2: Data Synchronization
 
