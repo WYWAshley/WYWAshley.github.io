@@ -1,0 +1,118 @@
+
+var weatherIcons = {
+    'Sunny': ROOT_PATH + 'data/asset/img/weather/sunny_128.png',
+    'Cloudy': ROOT_PATH + 'data/asset/img/weather/cloudy_128.png',
+    'Showers': ROOT_PATH + 'data/asset/img/weather/showers_128.png'
+};
+
+var seriesLabel = {
+    normal: {
+        show: true,
+        textBorderColor: '#333',
+        textBorderWidth: 2
+    }
+}
+
+option = {
+    title: {
+        text: 'CPU Utilization'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    legend: {
+        data: ['Container Utilization', 'Host Utilization(100% for container)', 'Host Utilization(10% for container)', 'Host Utilization(5% for container)']
+    },
+    grid: {
+        left: 100
+    },
+    toolbox: {
+        show: true,
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'value',
+        name: '%',
+        axisLabel: {
+            formatter: '{value}'
+        }
+    },
+    yAxis: {
+        type: 'category',
+        inverse: true,
+        data: ['PID limit: no', 'PID limit: 100', 'PID limit: 50'],
+        axisLabel: {
+            formatter: function (value) {
+                return value;
+            },
+            margin: 20,
+            rich: {
+                value: {
+                    lineHeight: 30,
+                    align: 'center'
+                },
+                Sunny: {
+                    height: 40,
+                    align: 'center'
+                },
+                Cloudy: {
+                    height: 40,
+                    align: 'center'
+                },
+                Showers: {
+                    height: 40,
+                    align: 'center'
+                }
+            }
+        }
+    },
+    series: [
+        {
+            name: 'Container Utilization',
+            type: 'bar',
+            data: [165, 170, 30],
+            label: seriesLabel
+        },
+        {
+            name: 'Host Utilization(100% for container)',
+            type: 'bar',
+            label: seriesLabel,
+            data: [150, 105, 110]
+        },
+        {
+            name: 'Container(10%)',
+            type: 'bar',
+            data: [165, 170, 30],
+            label: seriesLabel,
+            itemStyle: {
+                color: '#c23531'
+            }
+        },
+        {
+            name: 'Host Utilization(10% for container)',
+            type: 'bar',
+            label: seriesLabel,
+            data: [220, 82, 63]
+        },
+        {
+            name: 'Container(5%)',
+            type: 'bar',
+            data: [165, 170, 30],
+            label: seriesLabel,
+            itemStyle: {
+                color: '#c23531'
+            }
+        },
+        {
+            name: 'Host Utilization(5% for container)',
+            type: 'bar',
+            label: seriesLabel,
+            data: [150, 105, 110]
+        }
+    ]
+};
