@@ -28,4 +28,6 @@ keywords: echarts, markdown
 
 ### Use
 
-之前说到我是为了能够在 markdown 当中添加图表。其实说的不够准确，应该是在 github.io 个人网站上应用
+之前说到我是为了能够在 markdown 当中添加图表。其实说的不够准确，应该是在 github.io 个人网站上应用。编辑的文档通过 [jekyll](http://jekyllcn.com/) 将 markdown 文档构建为 html 静态网页。
+
+因此，要在用 markdown 写成的 blog 文档添加 echart 图表，只要插入 html 代码即可。
