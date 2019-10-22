@@ -182,6 +182,44 @@ nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 
 
 
+##### 不同 cpu share 和 pid limitation 的对比
+
+```chart 
+
+```
+
+,预算,收入,花费,债务 # 前面逗号不能省 
+
+June,5000,8000,4000,6000 
+
+July,3000,1000,4000,3000 
+
+Aug,5000,7000,6000,3000 
+
+Sep,7000,2000,3000,1000 
+
+Oct,6000,5000,4000,2000 
+
+Nov,4000,3000,5000, 
+
+
+
+type: column 
+
+title:每月收益 
+
+x.title: Amount 
+
+y.title: Month 
+
+y.prefix: $ 
+
+```
+
+```
+
+
+
 创建一个新的 image 然后保存它，之后每次都可以用这个 container 来实验，因为 sysbench 要用好几次。
 
 
