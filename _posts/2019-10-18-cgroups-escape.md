@@ -64,7 +64,7 @@ Cgroup 相关的 resource controller 一共有四种
 
 
 
-#### case 1: Exception Handling
+#### Case 1: Exception Handling
 
 ##### constrains
 
@@ -173,19 +173,26 @@ nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 
 为了方便展示，我把 container ID，Net I/O，Block I/O 这些字段删除了，重点关注容器的 cpu 占用，我们发现短时间内 cpu 使用率为 10.66%，在持续观察的过程中，基本都在 10% 上下，也符合之前设定的 10% 以内，因此在这种情况下，其实是 Apport 这个 core dump application 占用了大量的 CPU。
 
-* 进一步的说明将在明天进行
+
+
+##### 补充工作
+
+* 首先完成不同的 cpu share 和不同的 pid limitation 的实验
+* 利用 [sysbench](https://www.howtoforge.com/how-to-benchmark-your-system-cpu-file-io-mysql-with-sysbench) 进行对横向 DOS 攻击的 measure，且包含两个 containers 在同一个 core 和不同的 core 两个 case
+
+
+
+#### Case 2: Data Synchronization
 
 
 
 
 
-#### case 2
+#### Case 3
 
-#### case 3
+#### Case 4
 
-#### case 4
-
-#### case 5
+#### Case 5
 
 
 
