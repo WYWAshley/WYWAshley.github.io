@@ -182,6 +182,12 @@ nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 
 
 
+创建一个新的 image 然后保存它，之后每次都可以用这个 container 来实验，因为 sysbench 要用好几次。
+
+
+
+
+
 #### Case 2: Data Synchronization
 
 
