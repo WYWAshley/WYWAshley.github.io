@@ -233,7 +233,7 @@ formatter: '{value}'
 yAxis: {
 type: 'category',
 inverse: true,
-data: ['PID limit: no', 'PID limit: 100', 'PID limit: 50'],
+data: ['PID limit: none', 'PID limit: 100', 'PID limit: 50'],
 axisLabel: {
 formatter: function (value) {
 return value;
