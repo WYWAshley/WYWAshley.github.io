@@ -256,7 +256,7 @@ color: '#c23531'
 }
 },
 {
-name: 'Host (10% container)',
+name: 'Host(10% container)',
 type: 'bar',
 label: seriesLabel,
 data: [1200, 1200, 1200]
