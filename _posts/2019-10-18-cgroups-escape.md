@@ -407,7 +407,7 @@ sysbench 的测试结果显示，*events per second* 的值为 250.73。和论�
 # sysbench --test=fileio --file-total-size=20G cleanup
 ```
 
-最后得到的数据如下所示
+**最后得到的数据如下所示**
 
 |                | CPU    | Memory  | I/O Read | I/O Write |
 | -------------- | ------ | ------- | -------- | --------- |
@@ -415,7 +415,7 @@ sysbench 的测试结果显示，*events per second* 的值为 250.73。和论�
 | same core      | 7.31   | 56.22   | 0.28     | 0.18      |
 | different core | 10.81  | 68.74   | 0.86     | 0.58      |
 
-
+把**减少率**可视化如下图所示
 
 <div id="container2" style="weight:80%; height: 600px"></div>
 <script type="text/javascript" src="/js/dist/echarts.min.js"></script>
@@ -436,6 +436,9 @@ textBorderWidth: 2
 }
 }
 option = {
+    title: {
+        text: 'Annual Rate'
+    },
     tooltip: {
         trigger: 'axis'
     },
@@ -458,12 +461,12 @@ option = {
     series: [{
             name:'same core',
             type:'line',
-            data:[2.91, 2.2, 18.06, 17.47]
+            data:[97.09, 97.8, 81.94, 82.53]
         },
         {
             name:'different core',
             type:'line',
-            data:[4.31, 2.7, 55.48, 56.31]
+            data:[95.69, 97.3, 44.52, 43.69]
         }
     ]
 };
