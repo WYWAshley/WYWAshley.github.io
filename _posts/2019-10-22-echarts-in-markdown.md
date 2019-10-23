@@ -32,9 +32,9 @@ keywords: echarts, markdown
 
 因此，要在用 markdown 写成的 blog 文档添加 echarts 图表，只要插入 html 代码即可。我尝试了一下，在使用 [Typora](https://www.typora.io/) 作为 Markdown 编辑器，用 jekyll 来将 markdown 文档转化为 html 的情景下，可以直接在文档中插入 html 代码，实现 echarts 图表的绘制。
 
-下图即是在文档中插入代码之后绘制的图表
+下图即是在文档中插入代码之后绘制的图表，建议直接用 [vscode](https://code.visualstudio.com/) 这类编辑器插入，若是使用标准的 markdown 编辑器，会出现 html 代码外套标签导致无法正常显示图片。
 
-<div id="container" style="height: 100%"></div>
+<div id="container" style="weight:80%; height: 600px"></div>
 <script type="text/javascript" src="/js/dist/echarts.min.js"></script>
 <script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
 <script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
@@ -58,7 +58,6 @@ option = {
         type: 'bar'
     }]
 };
-;
 if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
