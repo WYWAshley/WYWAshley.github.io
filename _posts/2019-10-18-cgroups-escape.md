@@ -175,14 +175,7 @@ nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 
 
 
-##### 补充工作
-
-* 首先完成不同的 cpu share 和不同的 pid limitation 的实验
-* 利用 [sysbench](https://www.howtoforge.com/how-to-benchmark-your-system-cpu-file-io-mysql-with-sysbench) 进行对横向 DOS 攻击的 measure，且包含两个 containers 在同一个 core 和不同的 core 两个 case
-
-
-
-##### 不同 cpu share 和 pid limitation 的对比
+##### Different Cpu Share & PID Limitation
 
 
 
@@ -294,11 +287,64 @@ if (option && typeof option === "object") {
 
 
 
-在上图中，
+在上图中，只要在 container 中 run 我们之前编写的 exploit 程序，Host Utilization 即物理主机 cpu 使用量就会达到 1200%，因为物理机一共有 12 个 cpu core。可以看到在每个 pid limit 小组当中，container 的 cpu 使用量都是随着 cpu share 的限制逐步降低的，但有部分内容与论文当中展示的数据图表不同，主要有以下几点
+
+* **所有的 Host Utilization 均为 1200%**，不存在有 cpu 未被占满的情况
+* 由上一点可以看出，**限制 container 的 cpu share 并不能缓解 host cpu 滥用这一情况**
+* 随着 PID limit 的变化，container utilization 并没有大幅度的变化，事实上，因为在不限制 PID limit 的时候可以在短时间内创建大量的 core dump，因此 container utilization 还比其他的情况要低一些
 
 
 
-创建一个新的 image 然后保存它，之后每次都可以用这个 container 来实验，因为 sysbench 要用好几次。
+##### DoS Attack
+
+由于 sysbench 需要在容器当中使用，所以可以创建一个新的 image 然后保存它，之后每次都可以用这个 image 来实验，因为 sysbench 要用好几次。
+
+```dockerfile
+FROM ubuntu
+MAINTAINER Tianyu <lufeihaizei2008@gmail.com>
+COPY ./apt /apt-info
+RUN cp /apt-info/sources.list /etc/apt/
+RUN apt-get update
+RUN yes | apt-get install sysbench
+```
+
+利用上述的文件创建新的 image，然后利用新的 image 创建 victim container。
+
+```
+tianyu-ubuntu/
+├── apt
+│   └── sources.list
+└── Dockerfile
+```
+
+树型文件目录如上图所示，其中 apt 文件夹和 sources.list 文件是用来更新 apt-get 源，因为在国内需要用[国内的镜像](https://mirrors.zju.edu.cn/)。具体的 Dockerfile instruction 介绍请参考[官方文档](https://docs.docker.com/engine/reference/builder/)。
+
+然后在 `cgroup-escape/` 目录运行以下命令
+
+```shell
+$ docker build -t tianyu/ubuntu:v1 .
+```
+
+然后就可以在 docker images 当中看到我们新建的 image 了
+
+```shell
+$ docker images
+REPOSITORY         TAG     IMAGE ID          CREATED             SIZE
+tianyu/ubuntu      v1      ab7bed523666      7 seconds ago       131MB
+```
+
+在这个容器当中可以使用 [sysbench](https://github.com/akopytov/sysbench) 这个 cpu/memory 测试工具。这项工具的具体使用方法参照[这里](https://www.howtoforge.com/how-to-benchmark-your-system-cpu-file-io-mysql-with-sysbench)。
+
+在论文里面，对于性能的描述单位是
+
+* events per second for cpu
+* MiB per second for memory and I/O
+
+
+
+
+
+
 
 #### Case 2: Data Synchronization
 
