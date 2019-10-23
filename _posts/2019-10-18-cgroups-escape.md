@@ -217,12 +217,6 @@ data: ['Container Utilization', 'Host Utilization (100% for container)', 'Host U
 grid: {
 left: 100
 },
-toolbox: {
-show: true,
-feature: {
-saveAsImage: {}
-}
-},
 xAxis: {
 type: 'value',
 name: '%',
