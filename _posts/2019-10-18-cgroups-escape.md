@@ -245,7 +245,7 @@ series: [
 {
 name: 'Container Utilization',
 type: 'bar',
-data: [100, 11.5, 15],
+data: [7.14, 11.5, 15],
 label: seriesLabel
 },
 {
@@ -257,7 +257,7 @@ data: [1200, 1200, 1200]
 {
 name: 'Container(10%)',
 type: 'bar',
-data: [10.65, 10.09, 10.38],
+data: [2.56, 10.09, 10.38],
 label: seriesLabel,
 itemStyle: {
 color: '#c23531'
@@ -272,7 +272,7 @@ data: [1200, 1200, 1200]
 {
 name: 'Container(5%)',
 type: 'bar',
-data: [5.55, 5.35, 5.13],
+data: [3.04, 5.35, 5.13],
 label: seriesLabel,
 itemStyle: {
 color: '#c23531'
