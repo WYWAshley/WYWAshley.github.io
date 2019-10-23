@@ -184,7 +184,7 @@ nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 
 ##### 不同 cpu share 和 pid limitation 的对比
 
-创建一个新的 image 然后保存它，之后每次都可以用这个 container 来实验，因为 sysbench 要用好几次。
+
 
 <div id="container" style="weight:80%; height: 600px"></div>
 <script type="text/javascript" src="/js/dist/echarts.min.js"></script>
@@ -245,7 +245,7 @@ series: [
 {
 name: 'Container Utilization',
 type: 'bar',
-data: [0, 11.5, 15],
+data: [100, 11.5, 15],
 label: seriesLabel
 },
 {
@@ -257,7 +257,7 @@ data: [1200, 1200, 1200]
 {
 name: 'Container(10%)',
 type: 'bar',
-data: [0, 10.09, 10.38],
+data: [10.65, 10.09, 10.38],
 label: seriesLabel,
 itemStyle: {
 color: '#c23531'
@@ -272,7 +272,7 @@ data: [1200, 1200, 1200]
 {
 name: 'Container(5%)',
 type: 'bar',
-data: [0, 5.35, 5.13],
+data: [5.55, 5.35, 5.13],
 label: seriesLabel,
 itemStyle: {
 color: '#c23531'
@@ -291,6 +291,14 @@ if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
 </script>
+
+
+
+在上图中，
+
+
+
+创建一个新的 image 然后保存它，之后每次都可以用这个 container 来实验，因为 sysbench 要用好几次。
 
 #### Case 2: Data Synchronization
 
