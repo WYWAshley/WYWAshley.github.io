@@ -594,7 +594,7 @@ Shell Scripts (1 concurrent)                     42.4      12914.4   3045.8
 
 
 
-<div id="container3" style="weight:90%; height: 600px"></div>
+<div id="container3" style="weight:100%; height: 600px"></div>
 <script type="text/javascript" src="/js/dist/echarts.min.js"></script>
 <script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
 <script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
@@ -637,7 +637,7 @@ option = {
                 position: 'right',
                 fontSize: '14'
             },
-            barWidth: '45',
+            barWidth: '35',
             type: 'bar',
             data: [58.89, 5.36, 66.98, 61.41, 98.64, 96.22, 92.10, 96.86]
         }
