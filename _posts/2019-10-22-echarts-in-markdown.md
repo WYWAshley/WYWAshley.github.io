@@ -46,94 +46,18 @@ var dom = document.getElementById("container");
 var myChart = echarts.init(dom);
 var app = {};
 option = null;
-var seriesLabel = {
-normal: {
-show: true,
-position: 'right',
-textBorderWidth: 2
-}
-}
 option = {
-tooltip: {
-trigger: 'axis',
-axisPointer: {
-type: 'shadow'
-}
-},
-legend: {
-data: ['Container Utilization', 'Host Utilization (100% for container)', 'Host Utilization (10% for container)', 'Host Utilization (5% for container)']
-},
-grid: {
-left: 100
-},
-xAxis: {
-type: 'value',
-name: '%',
-axisLabel: {
-formatter: '{value}'
-}
-},
-yAxis: {
-type: 'category',
-inverse: true,
-data: ['PID limit: none', 'PID limit: 100', 'PID limit: 50'],
-axisLabel: {
-formatter: function (value) {
-return value;
-},
-margin: 20,
-rich: {
-value: {
-lineHeight: 30,
-align: 'center'
-}
-}
-}
-},
-series: [
-{
-name: 'Container Utilization',
-type: 'bar',
-data: [0, 11.5, 15],
-label: seriesLabel
-},
-{
-name: 'Host Utilization (100% for container)',
-type: 'bar',
-label: seriesLabel,
-data: [1200, 1200, 1200]
-},
-{
-name: 'Container(10%)',
-type: 'bar',
-data: [0, 10.09, 10.38],
-label: seriesLabel,
-itemStyle: {
-color: '#c23531'
-}
-},
-{
-name: 'Host Utilization (10% for container)',
-type: 'bar',
-label: seriesLabel,
-data: [1200, 1200, 1200]
-},
-{
-name: 'Container(5%)',
-type: 'bar',
-data: [0, 5.35, 5.13],
-label: seriesLabel,
-itemStyle: {
-color: '#c23531'
-}
-},
-{
-name: 'Host Utilization (5% for container)',
-type: 'bar',
-label: seriesLabel,
-data: [1200, 1200, 1200]
-}
-]
+    xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: [120, 200, 150, 80, 70, 110, 130],
+        type: 'bar'
+    }]
 };
 ;
 if (option && typeof option === "object") {
@@ -145,7 +69,7 @@ if (option && typeof option === "object") {
 上图的代码如下所示
 
 ```html
-<div id="container" style="height: 100%"></div>
+<div id="container" style="weight:80%; height: 600px"></div>
 <script type="text/javascript" src="/js/dist/echarts.min.js"></script>
 <script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
 <script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
@@ -169,6 +93,7 @@ option = {
         type: 'bar'
     }]
 };
+;
 if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
