@@ -34,6 +34,7 @@ keywords: echarts, markdown
 
 下图即是在文档中插入代码之后绘制的图表，建议直接用 [vscode](https://code.visualstudio.com/) 这类编辑器插入，若是使用标准的 markdown 编辑器，会出现 html 代码外套标签导致无法正常显示图片。
 
+
 <div id="container" style="weight:80%; height: 600px"></div>
 <script type="text/javascript" src="/js/dist/echarts.min.js"></script>
 <script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
@@ -62,6 +63,7 @@ if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
 </script>
+
 
 上图的代码如下所示
 
