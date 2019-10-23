@@ -205,8 +205,7 @@ type: 'shadow'
 }
 },
 legend: {
-data: ['Container Utilization', 'Host Utilization (100% for container)', 'Host Utilization (10% for container)', 'Host Utilization (5% for container)'],
-left: '30'
+data: ['Container', 'Host(100% container)', 'Host(10% container)', 'Host(5% container)']
 },
 xAxis: {
 type: 'value',
@@ -236,13 +235,13 @@ align: 'center'
 },
 series: [
 {
-name: 'Container Utilization',
+name: 'Container',
 type: 'bar',
 data: [7.14, 11.5, 15],
 label: seriesLabel
 },
 {
-name: 'Host Utilization (100% for container)',
+name: 'Host(100% container)',
 type: 'bar',
 label: seriesLabel,
 data: [1200, 1200, 1200]
@@ -257,7 +256,7 @@ color: '#c23531'
 }
 },
 {
-name: 'Host Utilization (10% for container)',
+name: 'Host (10% container)',
 type: 'bar',
 label: seriesLabel,
 data: [1200, 1200, 1200]
@@ -272,7 +271,7 @@ color: '#c23531'
 }
 },
 {
-name: 'Host Utilization (5% for container)',
+name: 'Host(5% container)',
 type: 'bar',
 label: seriesLabel,
 data: [1200, 1200, 1200]
