@@ -219,8 +219,10 @@ formatter: '{value}'
 },
 yAxis: {
 type: 'category',
+name: 'PID limit',
+nameLocation: 'start',
 inverse: true,
-data: ['PID limit: none', 'PID limit: 100', 'PID limit: 50'],
+data: ['none', '100', '50'],
 axisLabel: {
 formatter: function (value) {
 return value;
@@ -340,7 +342,7 @@ tianyu/ubuntu      v1      ab7bed523666      7 seconds ago       131MB
 * events per second for cpu
 * MiB per second for memory and I/O
 
-
+在这个 Dos Attack Case 里面，要运行 2 个 containers：一个是 malicious container，一个是 victim container。
 
 
 
