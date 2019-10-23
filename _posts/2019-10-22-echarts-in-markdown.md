@@ -36,33 +36,6 @@ keywords: echarts, markdown
 
 
 <div id="container" style="weight:80%; height: 600px"></div>
-<script type="text/javascript" src="/js/dist/echarts.min.js"></script>
-<script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
-<script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
-<script type="text/javascript" src="/js/dist/extension/dataTool.min.js"></script>
-<script type="text/javascript" src="/js/dist/extension/bmap.min.js"></script>
-<script type="text/javascript">
-var dom = document.getElementById("container");
-var myChart = echarts.init(dom);
-var app = {};
-option = null;
-option = {
-    xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: {
-        type: 'value'
-    },
-    series: [{
-        data: [120, 200, 150, 80, 70, 110, 130],
-        type: 'bar'
-    }]
-};
-if (option && typeof option === "object") {
-    myChart.setOption(option, true);
-}
-</script>
 
 
 上图的代码如下所示
