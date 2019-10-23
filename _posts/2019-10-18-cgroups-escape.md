@@ -537,7 +537,7 @@ File Copy 4096 bufsize 8000 maxblocks          5800.0    2444771.8   4215.1
 Process Creation                                126.0      14864.3   1179.7
 Shell Scripts (1 concurrent)                     42.4      13092.6   3087.9
 
-Shell Scripts (8 concurrent)                      ---      894.9        ---
+Shell Scripts (8 concurrent)                      ---        894.9      ---
 Shell Scripts (16 concurrent)                     6.0       1783.4   2972.3
 
 ```
@@ -590,6 +590,9 @@ Execl Throughput                                 43.0       6146.8   1429.5
 File Copy 4096 bufsize 8000 maxblocks          5800.0    2251578.5   3882.0
 Process Creation                                126.0      14396.9   1142.6
 Shell Scripts (1 concurrent)                     42.4      12914.4   3045.8
+
+Shell Scripts (1 concurrent)                      ---        871.8      ---
+Shell Scripts (1 concurrent)                      6.0       1738.5   2897.5
 ```
 
 
