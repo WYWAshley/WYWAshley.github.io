@@ -46,20 +46,20 @@ var myChart = echarts.init(dom);
 var app = {};
 option = null;
 option = {
-    xAxis: {
-        type: 'category',
-        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    },
-    yAxis: {
-        type: 'value'
-    },
-    series: [{
-        data: [120, 200, 150, 80, 70, 110, 130],
-        type: 'bar'
-    }]
+    xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: [120, 200, 150, 80, 70, 110, 130],
+        type: 'bar'
+    }]
 };
 if (option && typeof option === "object") {
-    myChart.setOption(option, true);
+    myChart.setOption(option, true);
 }
 </script>
 
@@ -78,20 +78,20 @@ var myChart = echarts.init(dom);
 var app = {};
 option = null;
 option = {
-xAxis: {
-type: 'category',
-data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-},
-yAxis: {
-type: 'value'
-},
-series: [{
-data: [120, 200, 150, 80, 70, 110, 130],
-type: 'bar'
-}]
+    xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: [120, 200, 150, 80, 70, 110, 130],
+        type: 'bar'
+    }]
 };
 if (option && typeof option === "object") {
-myChart.setOption(option, true);
+    myChart.setOption(option, true);
 }
 </script>
 ```
