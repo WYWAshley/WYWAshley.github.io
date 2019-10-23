@@ -536,6 +536,10 @@ Execl Throughput                                 43.0       6388.6   1485.7
 File Copy 4096 bufsize 8000 maxblocks          5800.0    2444771.8   4215.1
 Process Creation                                126.0      14864.3   1179.7
 Shell Scripts (1 concurrent)                     42.4      13092.6   3087.9
+
+Shell Scripts (8 concurrent)                      ---      894.9        ---
+Shell Scripts (16 concurrent)                     6.0       1783.4   2972.3
+
 ```
 
 
@@ -590,7 +594,7 @@ Shell Scripts (1 concurrent)                     42.4      12914.4   3045.8
 
 
 
-<div id="container3" style="weight:80%; height: 600px"></div>
+<div id="container3" style="weight:90%; height: 600px"></div>
 <script type="text/javascript" src="/js/dist/echarts.min.js"></script>
 <script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
 <script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
@@ -601,21 +605,43 @@ var dom = document.getElementById("container3");
 var myChart = echarts.init(dom);
 var app = {};
 option = {
+    title: {
+        text: 'performance degradation',
+        subtext: '占 baseline 数据的比例'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
     xAxis: {
-        axisLabel: {
-            interval: '0'
-        },
+        type: 'value',
+        boundaryGap: [0, 0.01]
+    },
+    yAxis: {
         type: 'category',
         data: ['seq_read', 'seq_write', 'rand_read', 'rand_write', 'shell script', 'excel throughput', 'file copy', 'process creation']
     },
-    yAxis: {
-        type: 'value'
-    },
-    series: [{
-        data: [58.89, 5.36, 66.98, 61.41, 98.64, 96.22, 92.10, 96.86],
-        type: 'bar',
-        barWidth: 40
-    }]
+    series: [
+        {
+            color: '#2f4554',
+            label: {
+                show: 'true',
+                position: 'right',
+                fontSize: '14'
+            },
+            barWidth: '45',
+            type: 'bar',
+            data: [58.89, 5.36, 66.98, 61.41, 98.64, 96.22, 92.10, 96.86]
+        }
+    ]
 };
 ;
 if (option && typeof option === "object") {
