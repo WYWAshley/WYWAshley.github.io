@@ -205,10 +205,8 @@ type: 'shadow'
 }
 },
 legend: {
-data: ['Container Utilization', 'Host Utilization (100% for container)', 'Host Utilization (10% for container)', 'Host Utilization (5% for container)']
-},
-grid: {
-left: 100
+data: ['Container Utilization', 'Host Utilization (100% for container)', 'Host Utilization (10% for container)', 'Host Utilization (5% for container)'],
+left: '30'
 },
 xAxis: {
 type: 'value',
