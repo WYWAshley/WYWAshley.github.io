@@ -344,7 +344,134 @@ tianyu/ubuntu      v1      ab7bed523666      7 seconds ago       131MB
 
 在这个 Dos Attack Case 里面，要运行 2 个 containers：一个是 malicious container，一个是 victim container。
 
+首先在 victim 当中运行 sysbench 性能测试，得到无任何干扰的 baseline，然后在相同和不同 cpu core 同时运行 victim/malicious container，查看对于 victim container 性能的影响。
 
+文章中说 victim container 和 malicious container 的 cpu share 和 quota 都一致，我在实验的时候设置的值如下
+
+* cpu share 的值为默认的 1024
+* cpu core 设定为 0 号
+* quota 的值未设定，而是通过 *--cpus=".5"* 来设置，即最多不超过 50%。
+
+首先是 base line 的 sysbench 测试
+
+```shell
+$ docker run --cpuset-cpus="0" --cpus=".5" --rm -it tianyu/ubuntu:v1
+root@84a29dfee4a6:/# sysbench --test=cpu --cpu-max-prime=20000 run
+sysbench 1.0.11 (using system LuaJIT 2.1.0-beta3)
+Running the test with following options:
+Number of threads: 1
+Initializing random number generator from current time
+
+Prime numbers limit: 20000
+Initializing worker threads...
+Threads started!
+
+CPU speed:
+    events per second:   218.67
+
+General statistics:
+    total time:                          10.0002s
+    total number of events:              2188
+
+Latency (ms):
+         min:                                  1.57
+         avg:                                  4.57
+         max:                                 57.72
+         95th percentile:                      9.22
+         sum:                               9998.17
+
+Threads fairness:
+    events (avg/stddev):           2188.0000/0.00
+    execution time (avg/stddev):   9.9982/0.00
+```
+
+sysbench 的测试结果显示，*events per second* 的值为 250.73。和论文当中的值 632.5 有较大差距，可能在于论文当中设置的 *--cpus* 参数值较大。我将 *--cpus* 改为 1 之后，得到的 *events per second* 的值为 627.17。
+
+接着做同一个 cpu core 运行 malicious container 的实验，得到的 *events per second* 的值为 7.31。
+
+最后是不同 cpu core 运行 malicious container 的实验，得到的 *events per second* 的值为 10.81。
+
+类似的，关于 memory 和 I/O Read/Write 的实验也和上述步骤类似，具体的 sysbench 测试语句如下，我参考了[这个网站](https://linuxtechlab.com/benchmark-linux-systems-install-sysbench-tool/)
+
+**memory**
+
+```shell
+# sysbench memory run
+```
+
+**I/O**
+
+```shell
+# sysbench --test=fileio --file-total-size=20G prepare
+# sysbench --test=fileio --file-total-size=20G --file-test-mode=rndrw --max-time=300 --max-requests=0 run
+# sysbench --test=fileio --file-total-size=20G cleanup
+```
+
+最后得到的数据如下所示
+
+|                | CPU    | Memory  | I/O Read | I/O Write |
+| -------------- | ------ | ------- | -------- | --------- |
+| Baseline       | 250.73 | 2545.81 | 1.55     | 1.03      |
+| same core      | 7.31   | 56.22   | 0.28     | 0.18      |
+| different core | 10.81  | 68.74   | 0.86     | 0.58      |
+
+
+
+<div id="container2" style="weight:80%; height: 600px"></div>
+<script type="text/javascript" src="/js/dist/echarts.min.js"></script>
+<script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
+<script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/bmap.min.js"></script>
+<script type="text/javascript">
+var dom = document.getElementById("container2");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
+var seriesLabel = {
+normal: {
+show: true,
+position: 'right',
+textBorderWidth: 2
+}
+}
+option = {
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['same core','different core']
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: {
+        type: 'category',
+        data: ['CPU','Memory','I/O Read','I/O Write']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+            name:'same core',
+            type:'line',
+            data:[2.91, 2.2, 18.06, 17.47]
+        },
+        {
+            name:'different core',
+            type:'line',
+            data:[4.31, 2.7, 55.48, 56.31]
+        }
+    ]
+};
+;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+</script>
 
 
 
