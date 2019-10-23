@@ -534,7 +534,6 @@ iops：磁盘的每秒读写次数，这个是随机读写考察的重点
 System Benchmarks Index Values               BASELINE       RESULT    INDEX
 Execl Throughput                                 43.0       6388.6   1485.7
 File Copy 4096 bufsize 8000 maxblocks          5800.0    2444771.8   4215.1
-Pipe Throughput                               12440.0    1053247.2    846.7
 Process Creation                                126.0      14864.3   1179.7
 Shell Scripts (1 concurrent)                     42.4      13092.6   3087.9
 ```
@@ -585,14 +584,44 @@ iops        : min=   63, max=  274, avg=165.91, stdev= 2.54, samples=3200
 System Benchmarks Partial Index              BASELINE       RESULT    INDEX
 Execl Throughput                                 43.0       6146.8   1429.5
 File Copy 4096 bufsize 8000 maxblocks          5800.0    2251578.5   3882.0
-Pipe Throughput                               12440.0    1024852.2    823.8
 Process Creation                                126.0      14396.9   1142.6
 Shell Scripts (1 concurrent)                     42.4      12914.4   3045.8
 ```
 
 
 
-
+<div id="container3" style="weight:80%; height: 600px"></div>
+<script type="text/javascript" src="/js/dist/echarts.min.js"></script>
+<script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
+<script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/bmap.min.js"></script>
+<script type="text/javascript">
+var dom = document.getElementById("container3");
+var myChart = echarts.init(dom);
+var app = {};
+option = {
+    xAxis: {
+        axisLabel: {
+            interval: '0'
+        },
+        type: 'category',
+        data: ['seq_read', 'seq_write', 'rand_read', 'rand_write', 'shell script', 'excel throughput', 'file copy', 'process creation']
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: [{
+        data: [58.89, 5.36, 66.98, 61.41, 98.64, 96.22, 92.10, 96.86],
+        type: 'bar',
+        barWidth: 40
+    }]
+};
+;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+</script>
 
 
 
