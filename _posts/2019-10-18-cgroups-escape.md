@@ -483,7 +483,7 @@ if (option && typeof option === "object") {
 
 #### I/O Based DOS Attack
 
-这个实验中，依旧是 2 个 containers，一个循环调用 sync() system call。另一个 victim container 中运行 [FIO benchmark](https://github.com/axboe/fio) 来检测 I/O performance，运行 [Unix benchmark](https://github.com/kdlucas/byte-unixbench) 来检测体统性能的变化。
+这个实验中，依旧是 2 个 containers run 在不同的 cpu core，一个循环调用 sync() system call。另一个 victim container 中运行 [FIO benchmark](https://github.com/axboe/fio) 来检测 I/O performance，运行 [Unix benchmark](https://github.com/kdlucas/byte-unixbench) 来检测体统性能的变化。
 
 ```shell
 $ docker run --cpuset-cpus="0" -v /home/zty/dev/byte-unixbench/:/unix-bench -v /home/zty/dev/fio:/fio --rm -it tianyu/ubuntu:v2
@@ -498,6 +498,14 @@ $ docker run --cpuset-cpus="0" -v /home/zty/dev/byte-unixbench/:/unix-bench -v /
 [使用fio测试磁盘I/O性能](https://segmentfault.com/a/1190000003880571)
 
 [fio 命令入门到跑路](https://blog.51cto.com/shaonian/2319175 )
+
+fio install
+
+```shell
+
+```
+
+fio test
 
 ```
 # fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=read -bs=4k -size=10M -numjobs=16 -runtime=100 -group_reporting
@@ -654,6 +662,8 @@ if (option && typeof option === "object") {
 
 #### Resource-Freeing Attack
 
+2 个 container run 在 同一个 cpu core，因此会 compete for cpu resource (cpu share is same as default 1024)
+
 victim container - file copy
 
 ```shell
@@ -799,7 +809,87 @@ if (option && typeof option === "object") {
 }
 </script>
 
-### Case 3
+### Case 3: System Process - Journald
+
+* 2 containers in **different cores** of the host
+
+* maclicious container: keep switching user and quit current user
+
+* victim container: run fio benchmark and unixbench same as case 2
+
+#### data clloect
+
+base line
+
+```shell
+$ docker run --cpuset-cpus="0" -v /home/zty/dev/byte-unixbench/:/unix-bench -v /home/zty/dev/fio:/fio --rm -it tianyu/ubuntu:v2
+root@2b6136c7c609:/# cd unix-bench/UnixBench
+root@2b6136c7c609:/unix-bench/UnixBench# ./Run execl fsdisk pipe spawn shell1
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+Execl Throughput                                 43.0       6216.6   1445.7
+File Copy 4096 bufsize 8000 maxblocks          5800.0    2391365.5   4123.0
+Pipe Throughput                               12440.0    1033155.9    830.5
+Process Creation                                126.0      14611.1   1159.6
+Shell Scripts (1 concurrent)                     42.4      12861.0   3033.2
+
+root@2b6136c7c609:/# cd /fio/
+root@2b6136c7c609:/fio# make install
+root@2b6136c7c609:/fio# cd /
+root@2b6136c7c609:/# mkdir data
+root@2b6136c7c609:/# fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=read -bs=4k -size=10M -numjobs=16 -runtime=30 -group_reporting
+   bw (  KiB/s): min=30136, max=45690, per=99.77%, avg=40622.48, stdev=327.10, samples=120
+   iops        : min= 7534, max=11422, avg=10154.91, stdev=81.77, samples=120
+   
+root@2b6136c7c609:/# fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=write -bs=4k -size=10M -numjobs=16 -runtime=30 -group_reporting
+   bw (  KiB/s): min= 4103, max=19202, per=100.00%, avg=14622.91, stdev=242.88, samples=352
+   iops        : min= 1025, max= 4800, avg=3655.27, stdev=60.73, samples=352
+   
+root@2b6136c7c609:/# fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=randread -bs=4k -size=10M -numjobs=16 -runtime=30 -group_reporting
+   bw (  KiB/s): min=  384, max= 3488, per=100.00%, avg=1654.84, stdev=42.31, samples=959
+   iops        : min=   96, max=  872, avg=412.96, stdev=10.58, samples=959
+   
+root@2b6136c7c609:/# fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=randwrite -bs=4k -size=10M -numjobs=16 -runtime=30 -group_reporting
+   bw (  KiB/s): min=  479, max= 2278, per=99.90%, avg=1212.78, stdev=18.01, samples=960
+   iops        : min=  119, max=  568, avg=302.28, stdev= 4.50, samples=960
+```
+
+attack
+
+malicious container
+
+```shell
+$ docker run --cpuset-cpus="5" -v /home/zty/dev/cfile:/cfile -it --rm ubuntu
+root@8ebbb7f63f8e:/# useradd james
+root@8ebbb7f63f8e:/# cat /cfile/su-user.sh 
+#!/bin/bash
+while true
+do
+  exit | su james
+done
+root@8ebbb7f63f8e:/# /cfile/su-user.sh
+```
+
+victim container - as benchmark like above
+
+**su operation in container cannot trigger journald in the Host**
+
+文中提及的操作并不能调用 Host 的 jounald 操作，因此不能 exploit
+
+下文是在 malicious container 循环 su/exit 操作时，在 host 上查看的 journald cpu 使用情况
+
+```shell
+$ ps -ax | grep jour
+  396 ?        S<s    0:16 /lib/systemd/systemd-journald
+$ top -p 396
+top - 14:04:44 up 22:26,  1 user,  load average: 1.85, 2.23, 1.94
+Tasks:   1 total,   0 running,   1 sleeping,   0 stopped,   0 zombie
+%Cpu(s):  3.4 us,  5.1 sy,  0.0 ni, 89.8 id,  0.0 wa,  0.0 hi,  1.6 si,  0.0 st
+KiB Mem : 16212392 total,  9236540 free,  3412200 used,  3563652 buff/cache
+KiB Swap:  2097148 total,  1858556 free,   238592 used. 12361432 avail Mem 
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                  
+  396 root      19  -1  175656  78124  70184 S   0.0  0.5   0:16.16 systemd-journal  
+```
 
 ### Case 4
 
