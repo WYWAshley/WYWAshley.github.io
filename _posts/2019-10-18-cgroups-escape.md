@@ -654,17 +654,17 @@ if (option && typeof option === "object") {
 
 #### Resource-Freeing Attack
 
-victim container - web crawler
+victim container - file copy
 
 ```shell
-$ cat apt/web-crawler.sh 
+$ cat /apt/file-cp.sh 
 #!/bin/bash
+curl https://www.cc98.org > 0.txt
 while true
 do
-	curl www.baidu.com > out.txt
+	cp 0.txt 1.txt
 done
-$ docker run --cpuset-cpus="0" -v /home/zty/dev/tianyu-ubuntu/apt
-:/cfile -it --rm tianyu/ubuntu:v2.1	# v2.1 installs curl
+$ docker run --cpuset-cpus="0" -v /home/zty/dev/tianyu-ubuntu/apt:/apt -it --rm tianyu/ubuntu:v2.1	# v2.1 installs curl
 ```
 
 malicious container - sync shell & sysbench
@@ -681,11 +681,39 @@ $ docker run --cpuset-cpus="0" -v /home/zty/dev/cfile:/cfile -it --rm tianyu/ubu
 
 baseline data
 
+```shell
+# in malicious container
+# cpu benchmark
+$ sysbench --test=cpu --cpu-max-prime=20000 run
+	events per second:   619.61
+# memory benchmark
+$ sysbench --test=cpu --cpu-max-prime=20000 run
+	6203.23 MiB/sec
 ```
 
+normal case (run on the same core)
+
+```shell
+# in malicious container
+# cpu benchmark
+$ sysbench --test=cpu --cpu-max-prime=20000 run
+	events per second:   308.21
+$ sysbench --test=cpu --cpu-max-prime=20000 run
+	3105.56 MiB/sec
 ```
 
+attack case
 
+```shell
+# in malicious container
+# expoit use sync
+$ /cfile/exploit.sh &
+# cpu benchmark
+$ sysbench --test=cpu --cpu-max-prime=20000 run
+	events per second:   526.24
+$ sysbench --test=cpu --cpu-max-prime=20000 run
+	5413.83 MiB/sec
+```
 
 
 
