@@ -715,7 +715,89 @@ $ sysbench --test=cpu --cpu-max-prime=20000 run
 	5413.83 MiB/sec
 ```
 
+汇总之后如下图所示
 
+<div id="container3" style="weight:100%; height: 600px"></div>
+<script type="text/javascript" src="/js/dist/echarts.min.js"></script>
+<script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
+<script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/bmap.min.js"></script>
+<script type="text/javascript">
+var dom = document.getElementById("container3");
+var myChart = echarts.init(dom);
+var app = {};
+option = {
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross',
+            crossStyle: {
+                color: '#999'
+            }
+        }
+    },
+    legend: {
+        data:['CPU','Memory']
+    },
+    xAxis: [
+        {
+            type: 'category',
+            data: ['baseline','normal','attack'],
+            axisPointer: {
+                type: 'shadow'
+            }
+        }
+    ],
+    yAxis: [
+        {
+            type: 'value',
+            name: 'events per second',
+            min: 0,
+            max: 700,
+            interval: 100
+        },
+        {
+            type: 'value',
+            name: 'MiB/s',
+            min: 0,
+            max: 7000,
+            interval: 1000
+        }
+    ],
+    series: [
+        {
+            name:'CPU',
+            label: {
+                normal: {
+                    show: 'true',
+                    position: 'top'
+                }
+            },
+            type:'bar',
+            barWidth: '40',
+            data:[619.61, 308.21, 526.24]
+        },
+        {
+            name:'Memory',
+            type:'bar',
+            yAxisIndex: 1,
+            label: {
+                normal: {
+                    show: 'true',
+                    position: 'top'
+                }
+            },
+            barWidth: '40',
+            data:[6203.23, 3105.26, 5413.83]
+        }
+    ]
+};
+;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+</script>
 
 ### Case 3
 
