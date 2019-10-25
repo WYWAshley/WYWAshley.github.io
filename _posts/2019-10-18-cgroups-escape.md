@@ -1003,7 +1003,6 @@ option = {
                 fontWeight: 'bolder',
                 formatter: '{b} {c}%',
             },
-            
             data:[
                 {value:53.5, name:'docker'},
                 {value:102.7, name:'container'},
