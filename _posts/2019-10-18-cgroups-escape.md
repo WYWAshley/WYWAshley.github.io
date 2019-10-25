@@ -503,7 +503,7 @@ $ docker run --cpuset-cpus="0" -v /home/zty/dev/byte-unixbench/:/unix-bench -v /
 
 [fio 命令入门到跑路](https://blog.51cto.com/shaonian/2319175 )
 
-fio install
+fio install 
 
 在 Host 上就可以进行 configure 和 make 操作，在 container 中只需要在目录下运行 *make install* 即可
 
