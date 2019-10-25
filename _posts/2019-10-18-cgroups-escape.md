@@ -66,13 +66,13 @@ Cgroup 相关的 resource controller 一共有四种
 
 ### Case 1: Exception Handling
 
-#### constrains
+**constrains**
 
 * cpu core: 1
 * cpu share: 100%, 10%, 5%
 * pid limitation: None, 100, 50
 
-#### method
+**method**
 
 首先确保安装了 docker[^note4] 并且下载了 ubuntu 镜像。若没有下载，在第一次运行该镜像时会自动下载。
 
@@ -175,7 +175,7 @@ nifty_gauss     10.66%      10.5MiB / 15.46GiB    0.07%         50
 
 
 
-#### Different Cpu Share & PID Limitation
+#### Graph for cpu utilization
 
 
 
@@ -412,6 +412,8 @@ sysbench 的测试结果显示，*events per second* 的值为 250.73。和论�
 | same core      | 7.31   | 56.22   | 0.28     | 0.18      |
 | different core | 10.81  | 68.74   | 0.86     | 0.58      |
 
+##### Graph
+
 把**减少率**可视化如下图所示
 
 <div id="container2" style="weight:80%; height: 600px"></div>
@@ -608,7 +610,7 @@ Shell Scripts (1 concurrent)                      ---        871.8      ---
 Shell Scripts (1 concurrent)                      6.0       1738.5   2897.5
 ```
 
-
+##### Graph
 
 <div id="container3" style="weight:100%; height: 600px"></div>
 <script type="text/javascript" src="/js/dist/echarts.min.js"></script>
@@ -729,6 +731,8 @@ $ sysbench --test=cpu --cpu-max-prime=20000 run
 $ sysbench --test=cpu --cpu-max-prime=20000 run
 	5413.83 MiB/sec
 ```
+
+##### Graph
 
 汇总之后如下图所示
 
@@ -972,6 +976,8 @@ dockerd 的 cpu 占用和论文中 dockerd + child process 的 cpu 占用差不�
 
 但我用 `pgrep -P {dockerd pid}` 时并没有找到相应的 child process，不知是否是作者的理解出问题还是我没有找到。
 
+#### Graph
+
 最后我总结数据为如下图表所示
 
 <div id="container5" style="weight:100%; height: 600px"></div>
@@ -999,7 +1005,7 @@ option = {
         {
             name:'process on host',
             type:'pie',
-            radius: ['90%', '50%'],
+            radius: ['40%', '80%'],
             avoidLabelOverlap: false,
             label: {
                 show: true,
@@ -1014,7 +1020,14 @@ option = {
                 {value:102.7, name:'container'},
                 {value:157.8, name:'dockerd'},
                 {value:29.6, name:'kworker'}
-            ]
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
         }
     ],
     graphic: {
@@ -1041,6 +1054,43 @@ if (option && typeof option === "object") {
 </script>
 
 ### Case 5:  Softirq Handling
+
+这个 case 主要针对的是 *softirqd* 和 *interrupt context*，分别利用 NET softirq 和 BLOCK softirq 来 generate workloads 到 Host 上去。
+
+从文章的分析上看，NET softirq 手段在 Local testbed 上表现还可以，在 iptable rules 达到 10w 的时候，最多可以消耗 Host 50% 的 cpu 资源，然而由于目前缺乏关于 iptable rules 的相关知识，同时也没法按照实验里说的那样制造大量的 network traffic，因为 paper 对这个 case 的描述不多。
+
+因此在这里只尝试 BLOCK softirq 的攻击手段，对于前者，我建立了一个 github issue，留待今后有需要的时候更新，有兴趣的同学也可以尝试。
+
+#### BLOCK softirq
+
+先准备新的 image，这次需要 sysbench 和 fio 两个 benchmark tool，因此过程如下
+
+```shell
+$ cat Dockerfile 
+FROM ubuntu
+MAINTAINER Tianyu <lufeihaizei2008@gmail.com>
+COPY ./apt /apt-info
+RUN cp /apt-info/sources.list /etc/apt/
+RUN apt-get update
+RUN yes | apt-get install sysbench make gcc
+$ docker build -t tianyu/ubuntu
+tianyu/ubuntu       tianyu/ubuntu:v1    tianyu/ubuntu:v2    tianyu/ubuntu:v2.1
+$ docker build -t tianyu/ubuntu:v5 .
+```
+
+然后启动 container 做一些初始化工作，注意需要限制在一个 cpu core 上
+
+```shell
+$ docker run --cpuset-cpus="0" -v /home/zty/dev/fio:/fio --rm -it tianyu/ubuntu:v5
+root@cfe09f72208c:/# cd /fio
+root@cfe09f72208c:/fio# ./configure
+root@cfe09f72208c:/fio# make
+root@cfe09f72208c:/fio# make install
+root@cfe09f72208c:/fio# fio --version
+fio-3.16
+root@cfe09f72208c:/fio# sysbench --version
+sysbench 1.0.11
+```
 
 
 
