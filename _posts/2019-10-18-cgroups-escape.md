@@ -497,6 +497,8 @@ $ docker run --cpuset-cpus="0" -v /home/zty/dev/byte-unixbench/:/unix-bench -v /
 
 参考
 
+[fio official doc](https://fio.readthedocs.io/en/latest/fio_doc.htm)
+
 [使用fio测试磁盘I/O性能](https://segmentfault.com/a/1190000003880571)
 
 [fio 命令入门到跑路](https://blog.51cto.com/shaonian/2319175 )
@@ -1090,6 +1092,7 @@ root@cfe09f72208c:/fio# fio --version
 fio-3.16
 root@cfe09f72208c:/fio# sysbench --version
 sysbench 1.0.11
+root@cfe09f72208c:/fio# fio -directory=/data/ -ioengine=sync -name=tempfile.dat -direct=1 -rw=read -bs=4k -size=10M -numjobs=16 -runtime=100 -group_reporting
 ```
 
 
