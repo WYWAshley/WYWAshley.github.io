@@ -977,6 +977,9 @@ dockerd 的 cpu 占用和论文中 dockerd + child process 的 cpu 占用差不�
 <script type="text/javascript" src="/js/dist/extension/bmap.min.js"></script>
 <script type="text/javascript">
 var dom = document.getElementById("container4");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
 option = {
     tooltip: {
         trigger: 'item',
