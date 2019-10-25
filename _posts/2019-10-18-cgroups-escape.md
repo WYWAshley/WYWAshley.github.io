@@ -501,8 +501,13 @@ $ docker run --cpuset-cpus="0" -v /home/zty/dev/byte-unixbench/:/unix-bench -v /
 
 fio install
 
-```shell
+在 Host 上就可以进行 configure 和 make 操作，在 container 中只需要在目录下运行 *make install* 即可
 
+```shell
+$ cd /fio
+$ ./configure
+$ make
+$ make install
 ```
 
 fio test
@@ -938,7 +943,7 @@ do
 done
 ```
 
-Host 上的 top 结果如下所示
+Host 上的 top 结果如下所示（只节选了需要参考的数据和属性列）
 
 ```shell
   PID USER        %CPU %MEM     TIME+ COMMAND
@@ -1035,7 +1040,9 @@ if (option && typeof option === "object") {
 }
 </script>
 
-### Case 5
+### Case 5:  Softirq Handling
+
+
 
 
 
