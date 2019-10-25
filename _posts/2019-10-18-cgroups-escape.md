@@ -1002,7 +1002,7 @@ option = {
                 color: '#fff',
                 fontSize: 18,
                 fontWeight: 'bolder',
-                formatter: '{b} {c}%',
+                formatter: '{c}%',
             },
             data:[
                 {value:53.5, name:'docker'},
