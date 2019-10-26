@@ -12,7 +12,7 @@ ftp 是文件传输协议 file transfer protocol 的缩写，现在较为安全�
 
 ### Reference
 
-[如何在 Ubuntu 18.04 上为用户目录设置 vsftpd](https://www.howtoing.com/how-to-set-up-vsftpd-for-a-user-s-directory-on-ubuntu-18-04)，[*[Melissa Anderson](https://www.digitalocean.com/community/users/melissaanderson)*](https://www.digitalocean.com/community/users/melissaanderson)
+[如何在 Ubuntu 18.04 上为用户目录设置 vsftpd](https://www.howtoing.com/how-to-set-up-vsftpd-for-a-user-s-directory-on-ubuntu-18-04)，[Melissa Anderson](https://www.digitalocean.com/community/users/melissaanderson)
 
 ### Install
 
