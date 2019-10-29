@@ -98,7 +98,7 @@ $ docker run --cpuset-cpus="0" --cpus=0.1 --pids-limit=50 -v /home/zty/dev/cfile
 
 
 
-接下来需要做的是编写 expoit code，用来制造 faults 从而实现 escape from parrent cgroup。
+接下来需要做的是编写 exploit code，用来制造 faults 从而实现 escape from parrent cgroup。
 
 编写的文件如下
 
