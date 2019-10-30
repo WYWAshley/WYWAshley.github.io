@@ -725,7 +725,7 @@ attack case
 
 ```shell
 # in malicious container
-# expoit use sync
+# exploit use sync
 $ /cfile/exploit.sh &
 # cpu benchmark
 $ sysbench --test=cpu --cpu-max-prime=20000 run
