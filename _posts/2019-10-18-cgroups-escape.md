@@ -1050,7 +1050,7 @@ option = {
             text: [
                 'Total:',
                 ' ',
-                '343.6%'
+                '463.17%'
             ].join('\n'),
             fontWeight: 'bolder',
             fontSize: 26
