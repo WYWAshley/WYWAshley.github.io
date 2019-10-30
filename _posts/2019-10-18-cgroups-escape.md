@@ -938,7 +938,11 @@ $ ps -ax | grep "docker\|container"
 26545 ?        Sl     3:06 containerd-shim
 ```
 
-containerd-shim 就是运行的容器，而论文当中指的 child processes 不知道具体指什么，另外在 container 执行以下脚本之后
+@@ **containerd-shim 就是运行的容器** @@
+
+上面这句话是错误的，参见[这个网站](http://alexander.holbreich.org/docker-components-explained/)，**containerd-shim 是由 containerd 创建的服务 container 的进程**，一个 container 对应一个 containers-shim。
+
+而论文当中指的 child processes 不知道具体指什么，另外在 container 执行以下脚本之后
 
 ```shell
 cat /cfile/exploit.sh 
@@ -952,25 +956,28 @@ done
 Host 上的 top 结果如下所示（只节选了需要参考的数据和属性列）
 
 ```shell
-  PID USER        %CPU %MEM     TIME+ COMMAND
- 1755 root       158.1  0.6  15:32.24 dockerd
-26545 root       103.3  0.0   5:09.25 containerd-shim
- 4466 root        99.3  0.0   0:21.16 exploit.sh
- 3897 zty         78.7  0.4   5:23.22 x-terminal-emul
-26519 zty         53.5  0.4   2:33.56 docker
- 4242 root        11.0  0.0   0:04.99 kworker/u24:5-e
- 2060 root        10.6  0.0   0:08.05 kworker/u24:2-e
- 2382 root         5.3  0.0   0:05.79 kworker/u24:4-e
-  820 root         3.7  0.0   0:17.33 kworker/u24:0-e
- 2922 zty          1.0  1.0   5:53.28 Xorg
- 3126 zty          0.7  1.6  16:30.35 gnome-shell
-    9 root         0.3  0.0   0:01.83 ksoftirqd/0
- 1924 zty          0.3  1.2   0:11.57 chrome
- 2048 zty          0.3  0.0   0:05.72 top
-    1 root         0.0  0.1   0:08.93 systemd   
+  PID USER        %CPU   %MEM     TIME+ COMMAND
+ 1475 root        161.5   0.6   2:45.41 dockerd                             
+18404 root        111.0   0.0   0:09.90 containerd-shim                     
+18529 root        99.7    0.0   0:08.89 exploit.sh                          
+18374 zty         54.5    0.4   0:04.86 docker                              
+17507 zty         40.5    0.0   0:03.97 sshd                                
+17399 root        11.0    0.0   0:01.00 kworker/u24:1-e                     
+17823 root        10.6    0.0   0:00.50 kworker/u24:2-e                     
+12171 root        10.0    0.0   0:02.70 kworker/u24:0+e                     
+18516 zty         1.0     0.3   0:00.11 chrome                              
+ 3270 zty         0.7     1.6  11:19.42 gnome-shell                         
+    9 root        0.3     0.0   0:00.20 ksoftirqd/0                         
+13879 root        0.3     0.0   0:01.57 kworker/u24:4-e                     
+    1 root        0.0     0.1   0:05.53 systemd   
 ```
 
+docker stats 的结果如下
 
+```
+NAME                CPU %               PIDS
+nice_goldberg       104.57%             2
+```
 
 dockerd 的 cpu 占用和论文中 dockerd + child process 的 cpu 占用差不多，具体论文中是如何区分 dockerd 和它的 child process 的，我并不知道，而且根据论文中所述
 
@@ -1001,7 +1008,7 @@ option = {
     legend: {
         orient: 'vertical',
         x: 'left',
-        data:['docker','container','dockerd','kworker']
+        data:['docker','container','dockerd','kworker','containerd-shim']
     },
     series: [
         {
@@ -1018,10 +1025,11 @@ option = {
                 formatter: '{c}%',
             },
             data:[
-                {value:53.5, name:'docker'},
-                {value:102.7, name:'container'},
-                {value:157.8, name:'dockerd'},
-                {value:29.6, name:'kworker'}
+                {value:54.5, name:'docker'},
+                {value:104.57, name:'container'},
+                {value:161.5, name:'dockerd'},
+                {value:31.6, name:'kworker'},
+                {value:111.0, name:'containerd-shim'}
             ],
             itemStyle: {
                 emphasis: {
