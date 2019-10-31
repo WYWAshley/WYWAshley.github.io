@@ -26,20 +26,9 @@ cgroup 是一组通过 cgroup filesystem 来定义的，具有特定资源限制
 
 subsystem 也叫做 resource controllers，是用来控制特定 cgroup 中进程资源使用的 kernel 组件。 
 
-```
-       The cgroups for a controller are arranged in a hierarchy.  This
-       hierarchy is defined by creating, removing, and renaming
-       subdirectories within the cgroup filesystem.  At each level of the
-       hierarchy, attributes (e.g., limits) can be defined.  The limits,
-       control, and accounting provided by cgroups generally have effect
-       throughout the subhierarchy underneath the cgroup where the
-       attributes are defined.  Thus, for example, the limits placed on a
-       cgroup at a higher level in the hierarchy c
-```
-
 cgroup 的资源控制是通过 hierarchy 的方式组织的。后续也会详细说明，cgroup 的 hierarchy 具体表现为文件目录树，方才也提到 cgroup 在 linux 当中的交互是通过一个虚拟文件系统来实现的，此处的 hierarchy 就很像文件系统的目录层次结构。我们可以创建、删除和重命名 cgroup 目录下的各个文件目录，而这些文件目录的名称，正是 cgroup 的名称。通过设置这些文件目录的当中文件的值，来控制之前提到的 controller 的行为。另外，cgroup 的资源访问的等级是自上而下的，意思就是说，任何 cgroup 的资源访问区域都不能够大于他们的祖先节点，也就是祖先文件目录。
 
-为了较为形象的来描述这个 hierarchy 在 linux 当中的表现形式，可以使用 ` tree -d -L 2 /sys/fs/cgroup/` 来查看 cgroup 的目录结构，此处为了观察方便，我们省略了 2 层以上的子目录。
+为了较为形象的来描述这个 hierarchy 在 linux 当中的表现形式，可以使用 `tree -d -L 2 /sys/fs/cgroup/` 来查看 cgroup 的目录结构，此处为了观察方便，我们省略了 2 层以上的子目录。
 
 ```shell
 /sys/fs/cgroup/
