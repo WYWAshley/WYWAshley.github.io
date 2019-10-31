@@ -36,42 +36,9 @@ cgroup 的资源控制是通过 hierarchy 的方式组织的。后续也会详�
 │   ├── docker
 │   ├── system.slice
 │   └── user.slice
-├── cpu -> cpu,cpuacct
-├── cpuacct -> cpu,cpuacct
-├── cpu,cpuacct
-│   ├── docker
-│   ├── system.slice
-│   └── user.slice
 ├── cpuset
 │   └── docker
-├── devices
-│   ├── docker
-│   ├── system.slice
-│   └── user.slice
-├── freezer
-│   └── docker
-├── hugetlb
-│   └── docker
-├── memory
-│   ├── docker
-│   ├── system.slice
-│   └── user.slice
-├── net_cls -> net_cls,net_prio
-├── net_cls,net_prio
-│   └── docker
-├── net_prio -> net_cls,net_prio
-├── perf_event
-│   └── docker
-├── pids
-│   ├── docker
-│   ├── system.slice
-│   └── user.slice
-├── rdma
-├── systemd
-│   ├── docker
-│   ├── init.scope
-│   ├── system.slice
-│   └── user.slice
+├── ...
 └── unified
     ├── init.scope
     ├── system.slice
