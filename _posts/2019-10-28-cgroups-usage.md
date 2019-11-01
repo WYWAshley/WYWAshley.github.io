@@ -111,5 +111,11 @@ $ tree -d -L 3 /sys/fs/cgroup/
 
 #### Tasks (threads) vs processes
 
+在 cgroup v1 当中，进程 processes 和线程 threads 的 cgroup 是可以区分对待的。一个 process 可以有多个 threads，在 cgroup v1 当中，我们可以独立控制每个 thread 的 cgroup。
 
+然而在这个模型当中，对每个 thread 进行 cgroup 分配会出现一些问题，比如对于 memory 来讲，同一个 process 的不同 thread 是共享内存地址空间的， 对这些进程分别应用不同的 memory controllers 是毫无意义的。
+
+因此在 cgroup v2 当中，独立操控 thread 级别的 cgroup 功能被移除了，相对的，为了精准控制多线程的情况，cgroup v2 引入了 *thread model*，在后续会进一步详细叙述。
+
+#### Mounting v1 controllers
 
