@@ -172,7 +172,7 @@ $ unmount /sys/fs/cgroup/pids
 
 **注意：**只有在一个 cgroup 没有 child cgroups 的时候，才能够 unmount 它，即它没有其它子目录。当 remove 子目录（child cgroup）的时候，必须保证它控制的 process 都已经转移到 root cgroup 或者清除，否则也不能 remove。
 
-### Cgroups version 1 controllers
+### Cgroups v1 controllers
 
 每一个 cgroup v1 当中的 controller 在使用之前必须在 build kernel 的时候显式的设定 configuration option（后续列出），并且在这之上必须要设定 `CONFIG_CGROUPS` 参数。
 
@@ -180,5 +180,31 @@ $ unmount /sys/fs/cgroup/pids
   * 设定一个在 cpu busy 时分到 cpu 资源的权重，权重越高，在竞争 cpu 资源时得到的越多
   * 当 enable `CONFIG_CFS_BANDWIDTH` 时，可以通过设定每个 scheduling period 的上限来限制 cpu 使用时间，即使 cpu 并没有 busy，被该 controller 控制的 process 也必须服从这一限制
 * *cpuacct* (`CONFIG_CGROUP_CPUACCT`)
-  * 
+  * 提供了对于一组 processes **cpu 使用量的计算**
+* *cpuset* (`CONFIG_CUPSETS`)
+  * 用来将 process 绑定到特定的 cpu 和 [NUMA](https://whatis.techtarget.com/definition/NUMA-non-uniform-memory-access) 节点上
+* *memory* (`CONFIG_MEMCG`)
+  * 记录 report 和限制 limit 具体 cgroup 的 process memory，kernel memory 还有 swap 的使用
+* devices (`devices`)
+  * 控制 process 对于设备的创建（`mknod`）、读和写
+  * 通过 whitelist 或者是 blacklist 的形式来限制
+  * 由于其 hierarchy 的结构，child cgroup 的设定必须不能和 ancestor cgroup 冲突
+* freezer (`CONFIG_CGROUP_FREEZER`)
+  * 用来挂起和回复所有该 cgroup 控制的 processes，freeze 一个 cgroup 也会使它的 child cgroup frozen，即这个操作是递归的
+* net_cls (`CONFIG_CGROUP_NET_CLASSID`)
+  * 该 controller 创建了一个 classid，这个 classid 和 cgroup 绑定，会在网络 packet 创建的时候用来匹配防火墙的规则
+  * 它仅对从 cgroup 发出的 packet 做限制，而不限制外来的 packet
+* blkio (`CONFIG_BLK_CGROUP`)
+  * 通过对存储层次结构中的叶节点和中间节点应用 I/O 控制（节流和上限）来控制和限制对指定块设备的访问
+  * 两种策略，一种是设定权重，基于权重进行磁盘时间的划分；另一种是设定 I/O rate 上限
+* net_prio (`CONFIG_CGROUP_NET_PRIO`)
+  * 设定网络的优先级
+* hugetlb (`CONFIG_CGROUP_HUGETLB`)
+  * 限制 huge pages 的使用
+* pids (`CONFIG_CGROUP_PIDS`)
+  * 限制单个 cgroup 创建进程的个数
+* rdma (`CONFIG_CGROUP_RDMA`)
+  * 限制 RDMA/IB-specific 资源的使用
+
+### Creating cgroups and moving processes
 
