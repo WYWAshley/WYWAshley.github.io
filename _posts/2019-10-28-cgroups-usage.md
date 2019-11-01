@@ -6,21 +6,21 @@ description: a translation of linux cgroup man page
 keywords: cgroup, linux
 ---
 
-## cgroup man
+# cgroup man
 
 written by Tianyu
 
 这篇 blog 是关于 linux cgroup man 的翻译，也加上了我的个人理解，具体的细节请结合官方的 [cgroup man page](http://man7.org/linux/man-pages/man7/cgroups.7.html) 来理解，当前我研究的 cgroup 一共有 2 个版本，v1 和 v2，这两个版本的 cgroup 在架构和功能上有较大的不同，具体内容会在下面的文章当中说明，**当前版本的 kernel 是 5.3.8**，具体研究的时候请参照最新的[说明文档](https://elixir.bootlin.com/linux/latest/source/Documentation/admin-guide/cgroup-v2.rst)来看。
 
-### Name
+## Name
 
 cgroups - Linux control groups
 
-### Description
+## Description
 
 cgroups，全名是 control groups，是 linux 用来监控和限制进程资源的 feature。linux kernel 的 cgroup interface 是名为 cgroupfs 的伪文件系统，类似 proc。之所以叫做 control groups，是因为将每个进程分到不同的 group 中去，按照 group 来对资源进行控制。每个资源（cpu、memory等）都是由单独的控制器 controller 来控制的。
 
-#### Terminology
+### Terminology
 
 cgroup 是一组通过 cgroup filesystem 来定义的，具有特定资源限制的进程 group。
 
@@ -49,7 +49,7 @@ cgroup 的资源控制是通过 hierarchy 的方式组织的。后续也会详�
 
 从上面可以看到，`/sys/fs/cgroup` 目录下面由很多文件，其中除了 `systemd` 和 `unified` 文件夹之外，都是用于 cgroup v1 的 controller 目录。
 
-#### Cgroups v1 and v2
+### Cgroups v1 and v2
 
 一开始 linux kernel 当中仅存在 cgroup v1，随着后续的开发，不断的有新的 controller 引入，因而整个 cgroup 体系变得非常的复杂，因为一开始的设计存在缺陷，所以在 linux 3.10 开始开发人员就着手设计新版的 cgroup，[cgroup v2](https://elixir.bootlin.com/linux/latest/source/Documentation/admin-guide/cgroup-v2.rst) 在 linux 4.5 正式上线，接下来的文章里面会有详细的关于这两个版本的分析。
 
@@ -83,7 +83,7 @@ cgroup 的资源控制是通过 hierarchy 的方式组织的。后续也会详�
 
 当前 kernel 当中两个版本的 cgroup 是并存的，而且出于 compile 的考虑，并不会将 cgroup v1 移除。在当前系统当中对于 cgroup 的应用也是并存的，但对于那些被 v2 implements 的 controller，只能选择应用 v1 或者 v2，而不能够两个版本同时使用。
 
-### Croups Version 1
+## Croups Version 1
 
 cgroup v1 每个 controller 对应一个 cgroup，也就是说，对于不同的 controller 可以有不同的 cgroup 去控制，当然，也可以为 多个 controller 设置同一个 cgroup。在上文当中，有介绍可以使用 `tree -d -L 2 /sys/fs/cgroup/` 来查看 cgroup 的目录结构，这里再次用它作为例子
 
@@ -109,7 +109,7 @@ $ tree -d -L 3 /sys/fs/cgroup/
 
 为了方便观察，我设置只显示了 3 层文件目录。在上图中可以看到，`cpu/`、`cpuacct/` 都是link，它们 link 到了同一个目录 `cpu,cpuacct/`，这就是多个 controller 共同对应一个 cgroup 的例子。前文中也说过，cgroup 提供了虚拟文件系统，这些文件目录就是 cgroup 在内核中 hierarchy 的镜像。每个文件夹对应一个特定的 cgroup，它们的子文件夹就是 child cgroup，父文件夹就是 parent cgroup。
 
-#### Tasks (threads) vs processes
+### Tasks (threads) vs processes
 
 在 cgroup v1 当中，进程 processes 和线程 threads 的 cgroup 是可以区分对待的。一个 process 可以有多个 threads，在 cgroup v1 当中，我们可以独立控制每个 thread 的 cgroup。
 
@@ -117,7 +117,7 @@ $ tree -d -L 3 /sys/fs/cgroup/
 
 因此在 cgroup v2 当中，独立操控 thread 级别的 cgroup 功能被移除了，相对的，为了精准控制多线程的情况，cgroup v2 引入了 *thread model*，在后续会进一步详细叙述。
 
-#### Mounting v1 controllers
+### Mounting v1 controllers
 
 在 Linux kernel 当中启用 cgroup 需要在 build 内核的过程中设置 `CONFIG_CGROUPS` 参数，我参考了 Linux 5.3 的 `/.config` 文件，发现关于 cgroup 的设定如下
 
@@ -162,7 +162,7 @@ dr-xr-xr-x  5 root root   0 Oct 30 06:00 cpu,cpuacct/
 
 **注意：**许多 controller 都已经在 system boot 阶段就已经 mount 到了 `/sys/fs/cgourp/` 目录下，`systemd` 亦然。
 
-#### Unmounting v1 controllers
+### Unmounting v1 controllers
 
 一个已经挂载的 cgroup 文件系统，可以被卸载，如现在要卸载 pids controller 对应的 cgroup file system
 
@@ -172,7 +172,7 @@ $ unmount /sys/fs/cgroup/pids
 
 **注意：**只有在一个 cgroup 没有 child cgroups 的时候，才能够 unmount 它，即它没有其它子目录。当 remove 子目录（child cgroup）的时候，必须保证它控制的 process 都已经转移到 root cgroup 或者清除，否则也不能 remove。
 
-#### Cgroups version 1 controllers
+### Cgroups version 1 controllers
 
 每一个 cgroup v1 当中的 controller 在使用之前必须在 build kernel 的时候显式的设定 configuration option（后续列出），并且在这之上必须要设定 `CONFIG_CGROUPS` 参数。
 
