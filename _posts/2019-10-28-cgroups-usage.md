@@ -119,7 +119,7 @@ $ tree -d -L 3 /sys/fs/cgroup/
 
 #### Mounting v1 controllers
 
-在 Linux kernel 当中启用 cgroup 需要在 build 内核的过程中设置 `CONFIG_CGROUP` 参数，我参考了 Linux 5.3 的 `/.config` 文件，发现关于 cgroup 的设定如下
+在 Linux kernel 当中启用 cgroup 需要在 build 内核的过程中设置 `CONFIG_CGROUPS` 参数，我参考了 Linux 5.3 的 `/.config` 文件，发现关于 cgroup 的设定如下
 
 ```shell
 CONFIG_CGROUPS=y
@@ -149,7 +149,7 @@ $ mount -t cgroup -o cpu none /sys/fs/cgroup/cpu
 $ mount -t cgroup -o cpu,cpuacct none /sys/fs/cgroup/cpu,cpuacct
 ```
 
-实际上在 *Linux zty-server 4.15.0-66-generic* 内核版本下，controller cpu 和 cpuacct 就是一同 mount 的。
+实际上在 *Linux 4.15.0-66-generic* 内核版本下，controller cpu 和 cpuacct 就是一同 mount 的。
 
 ```shell
 $ ll /sys/fs/cgroup/
@@ -157,4 +157,22 @@ lrwxrwxrwx  1 root root  11 Oct 29 02:36 cpu -> cpu,cpuacct/
 lrwxrwxrwx  1 root root  11 Oct 29 02:36 cpuacct -> cpu,cpuacct/
 dr-xr-xr-x  5 root root   0 Oct 30 06:00 cpu,cpuacct/
 ```
+
+对于一个特定的 process，它可以分 controller 对应不同的 cgroup，如 cpuset 对应 cg1，cpu 和 cpuacct 对应 cg2。然而同一个 controller 只能对应一个 cgroup，不可以对应多个 cgroup。
+
+**注意：**许多 controller 都已经在 system boot 阶段就已经 mount 到了 `/sys/fs/cgourp/` 目录下，`systemd` 亦然。
+
+#### Unmounting v1 controllers
+
+一个已经挂载的 cgroup 文件系统，可以被卸载，如现在要卸载 pids controller 对应的 cgroup file system
+
+```shell
+$ unmount /sys/fs/cgroup/pids
+```
+
+**注意：**只有在一个 cgroup 没有 child cgroups 的时候，才能够 unmount 它，即它没有其它子目录。当 remove 子目录（child cgroup）的时候，必须保证它控制的 process 都已经转移到 root cgroup 或者清除，否则也不能 remove。
+
+#### Cgroups version 1 controllers
+
+每一个 cgroup v1 当中的 controller 在使用之前必须在 build kernel 的时候显式的设定 configuration option（后续列出），并且在这之上必须要设定 `CONFIG_CGROUPS` 参数。
 
