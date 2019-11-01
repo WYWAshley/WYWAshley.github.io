@@ -12,13 +12,19 @@ written by Tianyu
 
 这篇 blog 是关于 linux cgroup man 的翻译，也加上了我的个人理解，具体的细节请结合官方的 [cgroup man page](http://man7.org/linux/man-pages/man7/cgroups.7.html) 来理解，当前我研究的 cgroup 一共有 2 个版本，v1 和 v2，这两个版本的 cgroup 在架构和功能上有较大的不同，具体内容会在下面的文章当中说明，**当前版本的 kernel 是 5.3.8**，具体研究的时候请参照最新的[说明文档](https://elixir.bootlin.com/linux/latest/source/Documentation/admin-guide/cgroup-v2.rst)来看。
 
+
+
 ## Name
 
 cgroups - Linux control groups
 
+
+
 ## Description
 
 cgroups，全名是 control groups，是 linux 用来监控和限制进程资源的 feature。linux kernel 的 cgroup interface 是名为 cgroupfs 的伪文件系统，类似 proc。之所以叫做 control groups，是因为将每个进程分到不同的 group 中去，按照 group 来对资源进行控制。每个资源（cpu、memory等）都是由单独的控制器 controller 来控制的。
+
+
 
 ### Terminology
 
@@ -48,6 +54,8 @@ cgroup 的资源控制是通过 hierarchy 的方式组织的。后续也会详�
 ```
 
 从上面可以看到，`/sys/fs/cgroup` 目录下面由很多文件，其中除了 `systemd` 和 `unified` 文件夹之外，都是用于 cgroup v1 的 controller 目录。
+
+
 
 ### Cgroups v1 and v2
 
@@ -83,6 +91,8 @@ cgroup 的资源控制是通过 hierarchy 的方式组织的。后续也会详�
 
 当前 kernel 当中两个版本的 cgroup 是并存的，而且出于 compile 的考虑，并不会将 cgroup v1 移除。在当前系统当中对于 cgroup 的应用也是并存的，但对于那些被 v2 implements 的 controller，只能选择应用 v1 或者 v2，而不能够两个版本同时使用。
 
+
+
 ## Croups Version 1
 
 cgroup v1 每个 controller 对应一个 cgroup，也就是说，对于不同的 controller 可以有不同的 cgroup 去控制，当然，也可以为 多个 controller 设置同一个 cgroup。在上文当中，有介绍可以使用 `tree -d -L 2 /sys/fs/cgroup/` 来查看 cgroup 的目录结构，这里再次用它作为例子
@@ -109,6 +119,8 @@ $ tree -d -L 3 /sys/fs/cgroup/
 
 为了方便观察，我设置只显示了 3 层文件目录。在上图中可以看到，`cpu/`、`cpuacct/` 都是link，它们 link 到了同一个目录 `cpu,cpuacct/`，这就是多个 controller 共同对应一个 cgroup 的例子。前文中也说过，cgroup 提供了虚拟文件系统，这些文件目录就是 cgroup 在内核中 hierarchy 的镜像。每个文件夹对应一个特定的 cgroup，它们的子文件夹就是 child cgroup，父文件夹就是 parent cgroup。
 
+
+
 ### Tasks (threads) vs processes
 
 在 cgroup v1 当中，进程 processes 和线程 threads 的 cgroup 是可以区分对待的。一个 process 可以有多个 threads，在 cgroup v1 当中，我们可以独立控制每个 thread 的 cgroup。
@@ -116,6 +128,8 @@ $ tree -d -L 3 /sys/fs/cgroup/
 然而在这个模型当中，对每个 thread 进行 cgroup 分配会出现一些问题，比如对于 memory 来讲，同一个 process 的不同 thread 是共享内存地址空间的， 对这些进程分别应用不同的 memory controllers 是毫无意义的。
 
 因此在 cgroup v2 当中，独立操控 thread 级别的 cgroup 功能被移除了，相对的，为了精准控制多线程的情况，cgroup v2 引入了 *thread model*，在后续会进一步详细叙述。
+
+
 
 ### Mounting v1 controllers
 
@@ -162,6 +176,8 @@ dr-xr-xr-x  5 root root   0 Oct 30 06:00 cpu,cpuacct/
 
 **注意：**许多 controller 都已经在 system boot 阶段就已经 mount 到了 `/sys/fs/cgourp/` 目录下，`systemd` 亦然。
 
+
+
 ### Unmounting v1 controllers
 
 一个已经挂载的 cgroup 文件系统，可以被卸载，如现在要卸载 pids controller 对应的 cgroup file system
@@ -171,6 +187,8 @@ $ unmount /sys/fs/cgroup/pids
 ```
 
 **注意：**只有在一个 cgroup 没有 child cgroups 的时候，才能够 unmount 它，即它没有其它子目录。当 remove 子目录（child cgroup）的时候，必须保证它控制的 process 都已经转移到 root cgroup 或者清除，否则也不能 remove。
+
+
 
 ### Cgroups v1 controllers
 
@@ -206,6 +224,8 @@ $ unmount /sys/fs/cgroup/pids
 * *rdma* (`CONFIG_CGROUP_RDMA`)
   * 限制 RDMA/IB-specific 资源的使用
 
+
+
 ### Creating cgroups and moving processes
 
 创建 cgroup 的方法很简单，类似新建目录
@@ -228,9 +248,43 @@ $ echo $$ > /sys/fs/cgroup/cpu/croup.procs
 
 当写入进程已有对应的 cgroup 时，它原先所属的 cgroup 的 `cgroup.procs` 文件当中的记录将被移除，同时，所有属于该进程的 threads 的 TID 都会被添加到 `task` 文件当中。可以手动的将 TID 赋值给其它 cgroup 的 `task` 文件，此时该线程将会属于其他的 cgroup。
 
+
+
 ### Removing cgroups
 
 如果要 remove 一个 cgroup，必须保证它没有 child cgroups 且没有任何 processes (nozombie) 才能够成功的 remove。
 
 **注意：**cgroup 目录下的文件不能也不需要被手动的移除。
+
+
+
+### Cgroups v1 release notification
+
+在 cgroup 层次目录下面有两个文件是用来处理当某个 cgroup 为 empty 时的情况。当一个 cgroup 没有 child cgroup 且没有 member processes 的时候，它就成为了一个 empty cgroup。
+
+在每个 cgroup hierarchy 的根目录，比如上文中的 `/sys/fs/cgroup/cpu/`，有一个名为 `release_agent` 的文件，该文件初始值为空，可以在其中添加**处理程序的路径**。这里的处理程序是自己编写的，专门在 cgroup becomes empty 时使用的，当特定的 cgroup 变为 empty 时，release_agent 会自动执行路径当中的程序，并将 cgroup 对应的文件挂载点作为参数传递给该程序。
+
+`release_agent` 文件的内容可以通过以下方式来声明
+
+```shell
+$ mount -o release_agent=pathname ...
+```
+
+若要在每次有 cgroup empty 出现的时候就触发该功能，需要再设定一个文件的值——`notify_on_release`，这个文件位于每一个 cgroup 的目录下，对应 `release_agent` 在该 cgroup 变为 empty 时的行为。当文件的值为 **1** 时， `release_agent` 文件才会启动，默认的值是 **0**。
+
+### Cgroup v1 named hierarchies
+
+cgroup 允许创建不和 controller 对应的 cgroup hierarchy，每个这样的 hierarchy 都要有唯一的名字。
+
+```shell
+$ mount -t cgroup -o none,name=somename none /some/mount/point
+```
+
+像这样的 hierarchy 可以创建多个。cgroup 提供这种机制的原因是需要有 track process 的功能，比如 `name=systemd` cgroup hierarchy 就是用来 track services 和 user sessions 的。
+
+从 Linux 5.0 开始，可以通过设定 `cgroup_no_v1 ` 这个 kernel boot option 来禁用 cgroup v1 的相关功能，若要禁止 named hierarchy，声明 `cgroup_no_v1=named` 即可。
+
+
+
+
 
