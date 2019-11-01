@@ -208,3 +208,29 @@ $ unmount /sys/fs/cgroup/pids
 
 ### Creating cgroups and moving processes
 
+创建 cgroup 的方法很简单，类似新建目录
+
+```shell
+ $ mkdir /sys/fs/cgroup/cpu/cg1
+```
+
+上述语句创建了一个新的空的 cgroup。
+
+当然，对于 cgroup v1 来说，每个 cgroup 都有所属的 controller，因此当创建具体 controller 的 cgroup 时，根目录就必须为该 controller 在 `/sys/fs/cgroup/` 下的目录。
+
+通过将 PID 写入 `cgroup.procs` 可以将该进程加入特定的 cgroup
+
+```shell
+$ echo $$ > /sys/fs/cgroup/cpu/croup.procs
+```
+
+一次只能往该文件写入一个 PID。若写入的值是 `0` 那么将会把写入进程的 PID 添加到该文件当中。
+
+当写入进程已有对应的 cgroup 时，它原先所属的 cgroup 的 `cgroup.procs` 文件当中的记录将被移除，同时，所有属于该进程的 threads 的 TID 都会被添加到 `task` 文件当中。可以手动的将 TID 赋值给其它 cgroup 的 `task` 文件，此时该线程将会属于其他的 cgroup。
+
+### Removing cgroups
+
+如果要 remove 一个 cgroup，必须保证它没有 child cgroups 且没有任何 processes (nozombie) 才能够成功的 remove。
+
+**注意：**cgroup 目录下的文件不能也不需要被手动的移除。
+
