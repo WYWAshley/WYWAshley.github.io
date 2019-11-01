@@ -176,3 +176,9 @@ $ unmount /sys/fs/cgroup/pids
 
 每一个 cgroup v1 当中的 controller 在使用之前必须在 build kernel 的时候显式的设定 configuration option（后续列出），并且在这之上必须要设定 `CONFIG_CGROUPS` 参数。
 
+* *cpu* (`CONFIG_CGROUP_SCHED`)
+  * 设定一个在 cpu busy 时分到 cpu 资源的权重，权重越高，在竞争 cpu 资源时得到的越多
+  * 当 enable `CONFIG_CFS_BANDWIDTH` 时，可以通过设定每个 scheduling period 的上限来限制 cpu 使用时间，即使 cpu 并没有 busy，被该 controller 控制的 process 也必须服从这一限制
+* *cpuacct* (`CONFIG_CGROUP_CPUACCT`)
+  * 
+
