@@ -119,3 +119,42 @@ $ tree -d -L 3 /sys/fs/cgroup/
 
 #### Mounting v1 controllers
 
+在 Linux kernel 当中启用 cgroup 需要在 build 内核的过程中设置 `CONFIG_CGROUP` 参数，我参考了 Linux 5.3 的 `/.config` 文件，发现关于 cgroup 的设定如下
+
+```shell
+CONFIG_CGROUPS=y
+CONFIG_CGROUP_SCHED=y
+# CONFIG_CGROUP_PIDS is not set
+# CONFIG_CGROUP_RDMA is not set
+CONFIG_CGROUP_FREEZER=y
+# CONFIG_CGROUP_HUGETLB is not set
+CONFIG_CPUSETS=y
+# CONFIG_CGROUP_DEVICE is not set
+CONFIG_CGROUP_CPUACCT=y
+# CONFIG_CGROUP_PERF is not set
+# CONFIG_CGROUP_DEBUG is not set
+```
+
+从上列设置中可以看到，*sched*、*freezer*、*cpusets*、*cpuacct* 这四个 controller 默认被启用了，而其余的并没有启用。
+
+我们可以通过 mount 指令来使用 cgroup
+
+```shell
+$ mount -t cgroup -o cpu none /sys/fs/cgroup/cpu
+```
+
+当然同时 mount 多个 controller 也是可以的，就像前文所说，可以指定多个 controller 共用同一个 cgroup。
+
+```shell
+$ mount -t cgroup -o cpu,cpuacct none /sys/fs/cgroup/cpu,cpuacct
+```
+
+实际上在 *Linux zty-server 4.15.0-66-generic* 内核版本下，controller cpu 和 cpuacct 就是一同 mount 的。
+
+```shell
+$ ll /sys/fs/cgroup/
+lrwxrwxrwx  1 root root  11 Oct 29 02:36 cpu -> cpu,cpuacct/
+lrwxrwxrwx  1 root root  11 Oct 29 02:36 cpuacct -> cpu,cpuacct/
+dr-xr-xr-x  5 root root   0 Oct 30 06:00 cpu,cpuacct/
+```
+
