@@ -286,5 +286,19 @@ $ mount -t cgroup -o none,name=somename none /some/mount/point
 
 
 
+## Cgroups Version 2
 
+与 cgroup v1 不同的是，cgroup v2 的所有 controller 都位于同一个 hierarchy 中，在虚拟文件系统表示为同一个文件夹下。考虑到存在 cgroup v1 和 v2 共同使用的情况，不允许一个 controller 即属于 cgroup v1 又属于 v2。
+
+cgroup v2 的新特性如下所示，部分需要重点描述的将会在后续当中详细说明
+
+1. Cgroup v2 为所有 mounted controllers 提供了一个共同的 hierarchy。
+2. **Internal** 进程不允许存在，简单的来说，除了 root cgroup 之外，所有的进程都只能绑定在 leaf nodes 上，所有既有 parent cgroup 又有 child cgroup 的 cgroup，都不能够有绑定的 process。具体的细节将会在后续给出。
+3. 有效的 cgroups 必须通过 *cgroup.controllers* 和 *cgroup.subtrss_control* 来描述。
+4. 原来存在于 cgroup 文件目录下的 *task* 文件被移除了，同时，为 cpuset controller 服务的 *cgroup.clone_children* 也被移除了。
+5. 之前提到的 Release Notification 机制，现在通过 *cgroup.events* 文件来实现。
+
+更多关于 cgroup v2 的具体信息可以参考 Linux source code 中的 [`cgroup-v2.rst`]( https://elixir.bootlin.com/linux/latest/source/Documentation/admin-guide/cgroup-v2.rst ) 文件。
+
+另外在 Linux 4.14 引入了 ***thread mode***，也会在后续当中详细说明。
 
