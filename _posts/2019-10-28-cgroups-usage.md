@@ -190,7 +190,7 @@ $ unmount /sys/fs/cgroup/pids
 
 
 
-### Cgroups v1 controllers
+### Controllers
 
 每一个 cgroup v1 当中的 controller 在使用之前必须在 build kernel 的时候显式的设定 configuration option（后续列出），并且在这之上必须要设定 `CONFIG_CGROUPS` 参数。
 
@@ -258,7 +258,7 @@ $ echo $$ > /sys/fs/cgroup/cpu/croup.procs
 
 
 
-### Cgroups v1 release notification
+### Release notification
 
 在 cgroup 层次目录下面有两个文件是用来处理当某个 cgroup 为 empty 时的情况。当一个 cgroup 没有 child cgroup 且没有 member processes 的时候，它就成为了一个 empty cgroup。
 
@@ -272,7 +272,7 @@ $ mount -o release_agent=pathname ...
 
 若要在每次有 cgroup empty 出现的时候就触发该功能，需要再设定一个文件的值——`notify_on_release`，这个文件位于每一个 cgroup 的目录下，对应 `release_agent` 在该 cgroup 变为 empty 时的行为。当文件的值为 **1** 时， `release_agent` 文件才会启动，默认的值是 **0**。
 
-### Cgroup v1 named hierarchies
+### Named hierarchies
 
 cgroup 允许创建不和 controller 对应的 cgroup hierarchy，每个这样的 hierarchy 都要有唯一的名字。
 
@@ -302,19 +302,53 @@ cgroup v2 的新特性如下所示，部分需要重点描述的将会在后续�
 
 另外在 Linux 4.14 引入了 ***thread mode***，也会在后续当中详细说明。
 
-### cgroups v2 unified hierarchy
+### Unified Hierarchy
+
+cgroup v1 之所以会让不同的 controllers 对应不同的 hierarchy，是因为想让应用的设计和开发更具灵活性，然而在实际的使用当中，非但没有增加灵活性，反而在很多情况里面增加了复杂度。因此在 cgroup v2 中移除了这个机制，所有支持 v2 的 controllers 被 mount 在了单一的 hierarchy 中。所有可用的 controllers 都会被自动挂载，也就意味着不需要（实际上也并不可能）通过以下语句去 mount controller
+
+```shell
+$ mount -t cgroup2 none /mnt/cgroup2
+```
+
+只有当一个 controller 不属于 cgroup v1 的 hierarchy 的时候，它才可以被 mount。换句话说，就是一个 controller 不能同时属于 v1 和 v2。当我们（v2）需要使用正被 v1 使用的 controller 时，要先将它 unmount。然而由于一些进程如 [systemd(1)](http://man7.org/linux/man-pages/man1/systemd.1.htmlhttp://man7.org/linux/man-pages/man1/systemd.1.html) 会频繁的使用一些 v1 的 controllers，最好的做法是改写 system boot command line，添加 `cgroup_no_v1=list`，其中 `list` 是需要禁止 v1 使用的 controllers 集合，或者可以用 `all` 表示所有的 controllers 都不能被 v1 使用。systemd(1) 可以自动的处理这种情况，即不再使用这些 controllers。
+
+事实上，现在许多现代操作系统里面，systemd(1) 自动 mount 了 cgroup2 file system，就位于根目录的 `/unified` 文件夹。在 [Terminology](#Terminology) 一节中有显示出来。
+
+### Controllers
+
+支持 cgroup v2 的 controller 
+
+```
+io          # successor of the v1 blkio
+memory      # successor of the v1 memory
+pids        # same as the v1 pids
+perf_event  # same as the v1 perf_event
+rdma        # same as the v1 rdma
+cpu         # successor of v1 cpu and cpuacct
+```
+
+具体可以参照官方文档的介绍 [`cgroup-v2.rst`]( https://elixir.bootlin.com/linux/latest/source/Documentation/admin-guide/cgroup-v2.rst )。
 
 
 
+### Subtree control
+
+每个 cgroup v2 的 hierarchy 都包S含了以下两个文件
+
+* *cgroup.controllers*
+  * 这是一个 read-only 文件，其中包含了对于该 cgroup available 的 controllers，它和 parent cgroup 目录当中的 cgroup.subtrr_control 文件内容相对应
+* *cgroup.subtree_control*
+  * 这是关于 active (enabled) controllers 的文件。这些 controllers 是 *cgroup.controllers* 文件当中 controllers 的一个子集，意思是不能够使用没有在 cgroup.controllers 文件当中声明的 controller。可以通过向文件写入 `+` 或 `-` 后面接上 controller 名字来 enable 或者 disable 特定的 controller，如下例子所示
+    * `$ echo '+pids -memory' > x/y/cgroup.subtrr_control`
+  * 如果想要 enable 的 controller 不在 *cgroup.controllers* 文件当中，那么在写入的时候会报错
+
+因为所有在 *cgroup.subtree_control* 文件当中列出的 controllers 都是 *cgroup.controllers* 的子集，所以一旦一个 controller 在某个 cgroup 当中被禁用，那么在它的后续 subtree 当中是没有办法重新启用的。
+
+在 *cgroup.subtree_control* 文件中列出的 controller 将会在 child cgroup 当中使用，所以在一旦 controller 被添加到  *cgroup.subtree_control* 文件中，child cgroup 目录将会自动添加 controller 对应的 interface 文件，比如 *pids.max* 等。这些文件可以被 child cgroup 用来做特定的资源限制。
 
 
 
-
-
-
-
-
-
+### "no internal processes" rule
 
 
 
