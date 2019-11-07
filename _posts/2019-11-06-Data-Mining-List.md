@@ -6,6 +6,10 @@ description: a list of conception in Data Mining
 keywords: data mining
 ---
 
+# Data Ming 考点
+
+
+
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -16,7 +20,7 @@ inlineMath: [['$','$']]
 });
 </script>
 
-# Data Ming 考点
+
 
 #### — 带上计算器！
 

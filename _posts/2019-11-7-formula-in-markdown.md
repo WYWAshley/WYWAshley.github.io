@@ -6,7 +6,7 @@ description: a QA for latex formula in markdown
 keywords: latex formula, markdown
 ---
 
-
+## 在 markdown blog 中正常显示 latex formula
 
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 <script type="text/x-mathjax-config">
@@ -19,8 +19,6 @@ inlineMath: [['$','$']]
 </script>
 
 
-
-## 在 markdown blog 中正常显示 latex formula
 
 为了在我的 blog 当中正常显示 [LaTeX](https://www.latex-project.org/) 语法的公式，如
 
