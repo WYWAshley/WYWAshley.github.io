@@ -1,9 +1,9 @@
 ---
 layout: post
-title: cgroup usage
-categories: [cgroup, linux kernel]
-description: a translation of linux cgroup man page
-keywords: cgroup, linux
+title: Data Mining Knowledge Points
+categories: [machine learning]
+description: a list of conception in Data Mining
+keywords: data mining
 ---
 
 <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
