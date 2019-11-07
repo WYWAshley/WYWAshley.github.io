@@ -166,7 +166,7 @@ inlineMath: [['$','$']]
 
         - 大大减小了计算开销
 
-        - 若属性 k 是离散的，即分类别的，那么 $P(x_k|C_i)$ 就是 $C_i$ 中 $x_k$ 出现的频率
+        - 若属性 k 是离散的，即分类别的，那么$P(x_k|C_i)$就是$C_i$中$x_k$出现的频率
 
         - 若属性 k 是连续的，那就用高斯分布区计算
 
@@ -194,8 +194,8 @@ inlineMath: [['$','$']]
         - Error rate = (FP + FN) / ALL
         - Sensitivity = TP / P, P = TP + FN
         - Specificity = TN / N, N = FP + TN
-        - <u>Precision:exactness **找到的分类有多少占比是找对了** precision = TP / (TP + FP)</u>
-        - <u>Recall:completeness **找到了对的分类占对的分类的总数** recall = TP / (TP + FN) 就是 sensitivity</u>
+        - Precision:exactness **找到的分类有多少占比是找对了** precision = TP / (TP + FP)
+        - Recall:completeness **找到了对的分类占对的分类的总数** recall = TP / (TP + FN) 就是 sensitivity
         - precision 越高，recall 越低，反之亦然
         - F measure $F = \frac{2\times precision \times recall}{precision + recall}$ 调和平均数
         - $F_\beta = \frac{(1+\beta^2)\times precision \times recall}{\beta^2 \times precision + recall}$ Weighted measure，$\beta$ 代表 recall 参数权重的倍数
