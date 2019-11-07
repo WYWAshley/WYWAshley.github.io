@@ -61,7 +61,7 @@ inlineMath: [['$','$']]
     * Normalization
         * mix-max `v' = (v-min)/(max-min)*(max'-min')+min'`
         * z-score `v' = (v-mu)/sigma`, where mu is mean, sigma is standard varience
-        * decimalscaling `v' = v / 10^j`, Where j is the smallest integer such that $Max(|v’|) < 1$ 
+        * decimalscaling `v' = v / 10^j`, Where j is the smallest integer such that $Max(\abs{v’}) < 1$ 
     - Discretization
         - 分箱法
             - Equal-width 等宽，然而极端值决定了分箱情况，且对 skew data 的适应性不好
