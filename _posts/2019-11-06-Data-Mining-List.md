@@ -57,11 +57,11 @@ inlineMath: [['$','$']]
     - sampling without replacement (不放回抽样)
     - sampling with replacement (放回抽样)
     - cluster or stratified sampling (分类抽样，按类别占比选取样本个数 for skewed data)
-- Data Transformation 相当重要，mix-max，z-score，decimal scaling
-    - Normalization
-        - mix-max `v' = (v-min)/(max-min)*(max'-min')+min'`
-        - z-score `v' = (v-mu)/sigma`, where mu is mean, sigma is standard varience
-        - decimalscaling `v' = v / 10^j`, Where j is the smallest integer such that $Max(|v’|) < 1$ 
+* Data Transformation 相当重要，mix-max，z-score，decimal scaling
+    * Normalization
+        * mix-max `v' = (v-min)/(max-min)*(max'-min')+min'`
+        * z-score `v' = (v-mu)/sigma`, where mu is mean, sigma is standard varience
+        * decimalscaling `v' = v / 10^j`, Where j is the smallest integer such that $Max(|v’|) < 1$ 
     - Discretization
         - 分箱法
             - Equal-width 等宽，然而极端值决定了分箱情况，且对 skew data 的适应性不好
