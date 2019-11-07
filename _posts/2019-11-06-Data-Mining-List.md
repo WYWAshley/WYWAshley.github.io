@@ -145,32 +145,32 @@ inlineMath: [['$','$']]
 
 - Bayes Classification *
 
-    - 贝叶斯概率 $P(B)=\sum_{i=1}^MP(B|A_i)P(A_i)$
+    - 贝叶斯概率 $P(B)=\sum_{i=1}^MP(B\lvert A_i)P(A_i)$
 
-    - 贝叶斯理论 $P(H|X)=\frac{P(X|H)P(H)}{P(X)}$
+    - 贝叶斯理论 $P(H\lvert X)=\frac{P(X\lvert H)P(H)}{P(X)}$
 
         - **X** 为一个 class label 未知的 data sample
         - **H** 是 **X** 属于 Class C 的假设
         - 贝叶斯公式的作用是将“已知 **X** 求 **X** 属于 Class C”的问题转化为求“已知有属于 Class C 的若干实例，这些实例中 **X** 出现的频率”，化未知为已知
         - 其实就是后验概率和先验概率的转化，posteriori = likehood x prior / evidence
 
-    - 计算所有 $P(C_i|X)$，**选取最大结果的 $C_i$ 作为 X 的分类结果**
+    - 计算所有 $P(C_i\lvert X)$，**选取最大结果的 $C_i$ 作为 X 的分类结果**
 
-    - <u>***注意！！！由于 P(X) 的概率在比较时是一致的，因而考虑的就只有 $P(X|C_i)$ 和 $P(C_i)$ 的乘积，因而两个都不能漏掉！！！***</u>
+    - <u>***注意！！！由于 P(X) 的概率在比较时是一致的，因而考虑的就只有 $P(X\lvert C_i)$ 和 $P(C_i)$ 的乘积，因而两个都不能漏掉！！！***</u>
 
     - 然而这需要事先知道很多值
 
     - 朴素贝叶斯 Naive Bayes Classifier
 
-        - 建立在每个 attribute 都互相独立，即 $P(X|C_i)=\prod_{k=1}^{n}P(x_k|C_i)$
+        - 建立在每个 attribute 都互相独立，即 $P(X\lvert C_i)=\prod_{k=1}^{n}P(x_k\lvert C_i)$
 
         - 大大减小了计算开销
 
-        - 若属性 k 是离散的，即分类别的，那么$P(x_k|C_i)$就是$C_i$中$x_k$出现的频率
+        - 若属性 k 是离散的，即分类别的，那么$P(x_k\lvert C_i)$就是$C_i$中$x_k$出现的频率
 
         - 若属性 k 是连续的，那就用高斯分布区计算
 
-            $$P(x_k|C_i) = g(x_k,\mu_{C_i},\sigma_{C_i}) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
+            $$P(x_k\lvert C_i) = g(x_k,\mu_{C_i},\sigma_{C_i}) = \frac{1}{\sqrt{2\pi}\sigma}e^{-\frac{(x-\mu)^2}{2\sigma^2}}$$
 
         - 因为是连乘，所以所有属性的概率都不能为 0，因此可以使用 Lappacian correction
 
