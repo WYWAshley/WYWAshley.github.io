@@ -61,7 +61,7 @@ inlineMath: [['$','$']]
     * Normalization
         * mix-max `v' = (v-min)/(max-min)*(max'-min')+min'`
         * z-score `v' = (v-mu)/sigma`, where mu is mean, sigma is standard varience
-        * decimalscaling `v' = v / 10^j`, Where j is the smallest integer such that $Max(\abs{v’}) < 1$ 
+        * decimalscaling `v' = v / 10^j`, Where j is the smallest integer such that $Max(\left\lvert{v’}\right\lvert) < 1$ 
     - Discretization
         - 分箱法
             - Equal-width 等宽，然而极端值决定了分箱情况，且对 skew data 的适应性不好
@@ -118,16 +118,16 @@ inlineMath: [['$','$']]
         - entropy 越大，则不确定性越大，该信息量越大
     - 在决策树构建时，选择获得信息量最大（highest **information gain**）的 attribute - ID3
         - $Info(D)=-\sum_{i=1}^m p_ilog_2(p_i)$ 选择 attribute 之前的信息熵
-        - $Info_A(D)=\sum_{j=1}^v \frac{|D_j|}{|D|}\times Info(D_j)$ 选择attribute 之后的信息熵
+        - $Info_A(D)=\sum_{j=1}^v \frac{\left\lvert{D_j}\right\lvert}{\left\lvert{D}\right\lvert}\times Info(D_j)$ 选择attribute 之后的信息熵
         - $Gain(A)=Info(D)-Info_A(D)$ 二者之差为信息增量
     - GainRatio to overcome attributes with large number of values
     - 对于**连续的属性**，需要进行划分，一般选取中间值，但依据始终是选取信息量要求最小的点
     - 当 attribute 的值特别多的时候，上面公式得到的 gain 往往不能直接参考，需要改动，引入了 **Gain Ratio** 的概念，称之为 C4.5，合起开就是 ID3/C4.5
-        - $SplitInfo_A(D)=-\sum_{j=1}^{v} \frac{|D_j|}{|D|}\times log_2(\frac{|D_j|}{|D|})$
+        - $SplitInfo_A(D)=-\sum_{j=1}^{v} \frac{\left\lvert{D_j}\right\lvert}{\left\lvert{D}\right\lvert}\times log_2(\frac{\left\lvert{D_j}\right\lvert}{\left\lvert{D}\right\lvert})$
         - 也就是说，最后选择作为 splitting attribute 的属性，**一定要是 Gain Ratio 最大的**
     - **Gini Index**
         - $gini(D)=1-\sum_{j=1}^{n}p_j^2$
-        - $gini_A(D)=\frac{|D_1|}{|D|}gini(D_1)+\frac{|D_2|}{|D|}gini(D_2)$
+        - $gini_A(D)=\frac{\left\lvert{D_1}\right\lvert}{\left\lvert{D}\right\lvert}gini(D_1)+\frac{\left\lvert{D_2}\right\lvert}{\left\lvert{D}\right\lvert}gini(D_2)$
         - $\Delta gini(A)=gini(D)-gini_A(D)$
         - 取 $\Delta$ 最小的分类方式
     - Comparation
@@ -256,7 +256,7 @@ inlineMath: [['$','$']]
 - K-Means *
     - 每个 cluster 由中心点来表征
     - 在找到这样一组 cluster，使得每个 cluster 内的数据点到中心点的距离之和最小
-    - $min_{r_{nk},\mu_k}\sum_{n=1}^{N}\sum_{k=1}^{K}r_{nk}||x_n-\mu_k||$，目标函数，其中 $r_{nk}$ 仅当 $x_n$ 属于 $k$ 号聚类的时候才为 1，否则为 0。这个目标函数计算出的就是各聚类的点到中心点的欧式距离之和
+    - $min_{r_{nk},\mu_k}\sum_{n=1}^{N}\sum_{k=1}^{K}r_{nk}\left\lvert\left\lvert{x_n-\mu_k}\right\lvert\right\lvert$，目标函数，其中 $r_{nk}$ 仅当 $x_n$ 属于 $k$ 号聚类的时候才为 1，否则为 0。这个目标函数计算出的就是各聚类的点到中心点的欧式距离之和
     - 方法
         - 第一步随机划分 $K$ 个聚类
         - 第二步保持各个点所属聚类不变，通过改变中心点的位置使得目标函数最小化
