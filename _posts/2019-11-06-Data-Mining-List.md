@@ -6,7 +6,7 @@ description: a list of conception in Data Mining
 keywords: data mining
 ---
 
-# Data Ming 考点
+# Data Ming Exam points
 
 
 
