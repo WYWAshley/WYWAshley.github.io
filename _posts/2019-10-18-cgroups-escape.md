@@ -830,6 +830,21 @@ if (option && typeof option === "object") {
 
 #### data clloect
 
+Dockerfile
+
+```shell
+$ cat Dockerfile
+FROM ubuntu
+MAINTAINER Tianyu <lufeihaizei2008@gmail.com>
+COPY ./apt /apt-info
+RUN cp /apt-info/sources.list /etc/apt/
+RUN apt-get update
+RUN yes | apt-get install make gcc perl
+$ docker build -t tianyu/ubuntu:v2 .
+```
+
+**make sure you have installed `perl`, otherwise you will get trouble while running unixbench for it is using perl to do test.**
+
 base line
 
 ```shell
@@ -864,7 +879,7 @@ root@2b6136c7c609:/# fio -directory=/data/ -name=tempfile.dat -direct=1 -rw=rand
    iops        : min=  119, max=  568, avg=302.28, stdev= 4.50, samples=960
 ```
 
-attack
+**attack**
 
 malicious container
 
@@ -881,6 +896,8 @@ root@8ebbb7f63f8e:/# /cfile/su-user.sh
 ```
 
 victim container - as benchmark like above
+
+-------------- this is out of date
 
 **su operation in container cannot trigger journald in the Host**
 
@@ -901,6 +918,24 @@ KiB Swap:  2097148 total,  1858556 free,   238592 used. 12361432 avail Mem
   PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                  
   396 root      19  -1  175656  78124  70184 S   0.0  0.5   0:16.16 systemd-journal  
 ```
+
+---------------- 2019.11.12
+
+After receiving the email of the author, I realize that I don't have installed an important application called `auditd`.
+
+```shell
+$ sudo apt install auditd
+```
+
+Do above command to install  `auditd`, then you will observe the utilization increase of `journald`, `auditd` and `kaouditd` after keeping changing user inside the container.
+
+**result**
+
+```shell
+$ sudo iotop -oP
+```
+
+This command can observe the processes which are doing I/O operations. More info please consider `man iotop`.
 
 ### Case 4: Container Engine
 
