@@ -940,23 +940,78 @@ This command can observe the processes which are doing I/O operations. More info
 Unixbench 
 
 ```
-Execl Throughput                                 43.0       6049.7   1406.9
-File Copy 4096 bufsize 8000 maxblocks          5800.0    3624006.8   6248.3
-Pipe Throughput                               12440.0     964841.3    775.6
-Process Creation                                126.0      13872.3   1101.0
-Shell Scripts (1 concurrent)                     42.4      12434.9   2932.8
+System Benchmarks Partial Index              BASELINE       RESULT    INDEX
+Execl Throughput                                 43.0       6063.9   1410.2
+File Copy 4096 bufsize 8000 maxblocks          5800.0    2317441.3   3995.6
+Process Creation                                126.0      14555.2   1155.2
+Shell Scripts (1 concurrent)                     42.4      12276.8   2895.5
 ```
-
-
 
 **fio benchmark**
 
-|            | bw average | iops average |
-| ---------- | ---------- | ------------ |
-| Read       | 6642.58    | 1659.94      |
-| Write      | 943.68     | 235.38       |
-| Rand_read  | 1067.48    | 266.28       |
-| Rand_write | 666.47     | 166.04       |
+|            | bw average       | iops average     |
+| ---------- | ---------------- | ---------------- |
+| Read       | 6642.58/40570.14 | 1659.94/10142.25 |
+| Write      | 943.68/15815.60  | 235.38/3953.65   |
+| Rand_read  | 1067.48/1687.47  | 266.28/421.07    |
+| Rand_write | 666.47/1230.35   | 166.04/306.95    |
+
+
+
+<div id="container3" style="weight:100%; height: 600px"></div>
+<script type="text/javascript" src="/js/dist/echarts.min.js"></script>
+<script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
+<script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="/js/dist/extension/bmap.min.js"></script>
+<script type="text/javascript">
+var dom = document.getElementById("container3");
+var myChart = echarts.init(dom);
+var app = {};
+option = {
+    title: {
+        text: 'performance degradation',
+        subtext: '占 baseline 数据的比例'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: {
+        type: 'value',
+        boundaryGap: [0, 0.01]
+    },
+    yAxis: {
+        type: 'category',
+        data: ['seq_read', 'seq_write', 'rand_read', 'rand_write', 'shell script', 'excel throughput', 'file copy', 'process creation']
+    },
+    series: [
+        {
+            color: '#2f4554',
+            label: {
+                show: 'true',
+                position: 'right',
+                fontSize: '14'
+            },
+            barWidth: '35',
+            type: 'bar',
+            data: [16.37, 5.96, 63.25, 54.16, 91.18, 91.95, 88.13, 93.78]
+        }
+    ]
+};
+;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+</script>
 
 
 
