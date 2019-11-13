@@ -958,14 +958,14 @@ Shell Scripts (1 concurrent)                     42.4      12276.8   2895.5
 
 
 
-<div id="container3" style="weight:100%; height: 600px"></div>
+<div id="container-case3" style="weight:100%; height: 600px"></div>
 <script type="text/javascript" src="/js/dist/echarts.min.js"></script>
 <script type="text/javascript" src="/js/dist/echarts-gl.min.js"></script>
 <script type="text/javascript" src="/js/dist/ecStat.min.js"></script>
 <script type="text/javascript" src="/js/dist/extension/dataTool.min.js"></script>
 <script type="text/javascript" src="/js/dist/extension/bmap.min.js"></script>
 <script type="text/javascript">
-var dom = document.getElementById("container3");
+var dom = document.getElementById("container-case3");
 var myChart = echarts.init(dom);
 var app = {};
 option = {
