@@ -8,7 +8,7 @@ keywords: exception, assertion
 
 &emsp;&emsp;本文主要讲了Python3 处理异常的语法，以及如何利用异常处理解决一些实际操作，同时介绍了BaseException类和Assertion。
 
-<img src="/images/posts/Python3-Exception-and-Error/title.png" alt="image-title"  />
+<img src="/images/posts/Python3-Exception-and-Error/title.png" alt="title"/>
 
 ## 一、异常处理存在的意义
 
