@@ -53,8 +53,8 @@ MapReduce 的实际处理过程可以分解为 Input、Map、Sort、Combine、Pa
 * reduce 阶段，会调用 **groupingcomparator** 进行分组，之后的 reduce 中会按照这个分组，每次取出一组数据，调用 reduce 中自定义的方法进行处理。
 
 * 在文件被读入的时候调用的是 Inputformat 方法读入的。InputFormat —> RecordReader —> Read(k, v) （行，行内容）  -> map（变成真正的key-value） -> context.Write -> OutputCollector -> shuffle -> reduce -> OutputFormat -> RecordWriter -> Write(k, v)。
-  
-  
+
+&nbsp;
 
 ## 二、流程详细
 
@@ -97,13 +97,13 @@ public int run(String[] args) throws Exception {
 
 ③ RecordReader 类，它主要的方法是 next()，作用就是从 InputSplit 读出一条 key-value对。
 
-
+&nbsp;
 
 ### 2. Map 阶段
 
 ④ TaskTracker 每隔一段时间会给 JobTracker 发送一个心跳，告诉 JobTracker 它依然在运行，同时心跳中还携带着很多的信息，比如当前 map 任务完成的进度等信息。当 JobTracker 收到作业的最后一个任务完成信息时，便把该作业设置成“成功”。当 JobClient 查询状态时，它将得知任务已完成，便显示一条消息给用户。
 
-
+&nbsp;
 
 ### 3. Shuffle 阶段
 
@@ -117,7 +117,7 @@ public int run(String[] args) throws Exception {
 
 ⑧ Reducer 的另一个 thread 会把拷贝过来的 map output file 合并成更大的 file。 如果 map task 被 configure 成需要对 map output 进行压缩，那 reduce 还要对 map 结果进行解压缩。当一个 reduce task 所有的 map output 都被拷贝到一个它的 host上时，reduce 就要开始对他们排序了。
 
-
+&nbsp;
 
 ### 4. Reduce 阶段
 
@@ -127,7 +127,7 @@ public int run(String[] args) throws Exception {
 
 ⑩ 随着溢写文件的增多，后台线程会将它们合并成一个更大的有序的文件，这样做是为了给后面的合并节省时间。合并的过程中会产生许多的中间文件（写入磁盘了），但MapReduce会让写入磁盘的数据尽可能地少，并且最后一次合并的结果并没有写入磁盘，而是直接输入到reduce函数。
 
-
+&nbsp;
 
 ## 三、MapReduce2.0升级
 
@@ -140,7 +140,7 @@ Hadoop框架的自身问题限制了集群的发展。首先是，JobTracker 和
 
 所以 Yarn框架 应运而生。
 
-
+&nbsp;
 
 ### 1. 模块分析
 
@@ -166,7 +166,7 @@ Hadoop框架的自身问题限制了集群的发展。首先是，JobTracker 和
 
   在 MRv1 中，JobHistroy server 是嵌入在 Jobtracker 中的，当有大量的查询 时，对 Jobtracker 造成很大的压力。Yarn中实现一套单独的 JobHistroy server 服务。
 
-
+&nbsp;
 
 ### 2. Yarn 工作流程
 
@@ -188,11 +188,11 @@ Hadoop框架的自身问题限制了集群的发展。首先是，JobTracker 和
 
 ⑧ 应用程序运行完成后， ApplicationMaster 向 ResourceManager 注销并关闭自己。
 
-
+&nbsp;
 
 但是并不意味着MapReduce1.0被淘汰，在Yarn中的MRYarnClild模块中基本上是是采用MapReduce1.0的解决思路，MRv2 具有与 MRv1 相同的编程模型和数据处理引擎，唯一不同的是运行时环境。MRv2 是在 MRv1 基础上经加工之后，运行于资源管理框架 YARN 之上的计算框架 MapReduce。 它的运行时环境不再由 JobTracker 和 TaskTracker 等服务组成，而是变为通用资源管理 系统 YARN 和作业控制进程 ApplicationMaster，其中，YARN 负责资源管理和调度，而 ApplicationMaster 仅负责一个作业的管理。简言之，MRv1 仅是一个独立的离线计算框架， 而 MRv2 则是运行于 YARN 之上的 MapReduce。
 
-
+&nbsp;
 
 ## 四、词频统计例子
 
