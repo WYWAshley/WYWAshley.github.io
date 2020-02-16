@@ -1,12 +1,16 @@
-# Map-Reduce 工作流程理解
+---
+layout: post
+title: Map-Reduce 工作流程理解
+categories: [Bigdata, Hadoop]
+description: Describe workflow of MRv1, Difference for MRv2
+keywords: Map-Reduce
+---
 
-MapReduce 计算模型实现数据处理时，应用程序开发者只需要负责 Map 函数和 Reduce 函数的实现，而不需要处理分布式和并行编程中的各种复杂问题。
+Content here
 
-如分布式存储、分布式通信、任务调度、容错处理、负载均衡、数据可靠等，这些问题都由 Hadoop MapReduce 框架负责处理，应用开发者只需要负责完成 Map 函数与 Reduce 函数的实现。
+本文详细的说明了 MapReduce 的工作框架和流程，以及介绍了 MapReduce 2.0的区别。最后在先前搭载的 Hadoop 集群中实现了 Python 词频统计程序。
 
-尽管如此，好奇的我还是想知道的具体一点神奇的 MapReduce 是怎么做到这些的，所以写下了这篇博客。
-
-
+MapReduce 计算模型实现数据处理时，应用程序开发者只需要负责 Map 函数和 Reduce 函数的实现，而不需要处理分布式和并行编程中的各种复杂问题。如分布式存储、分布式通信、任务调度、容错处理、负载均衡、数据可靠等，这些问题都由 Hadoop MapReduce 框架负责处理，应用开发者只需要负责完成 Map 函数与 Reduce 函数的实现。
 
 ## 一、工作框架
 
