@@ -237,7 +237,7 @@ AssertionError: 1 不等于 2
 
 参考资料：
 
-1. 《[[python中常见的一些错误异常类型](https://www.cnblogs.com/pychina/p/10238978.html)》
+1. 《[python中常见的一些错误异常类型](https://www.cnblogs.com/pychina/p/10238978.html)》
 2. 《[一文掌握 Python 异常处理的所有知识点](https://juejin.im/entry/5a713192518825732a6dce43)》
 3. 《[Python3 错误和异常](https://www.runoob.com/python3/python3-errors-execptions.html)》
 4. 《[Python3 assert](https://www.runoob.com/python3/python3-assert.html)》
