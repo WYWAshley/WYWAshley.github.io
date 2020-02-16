@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Map-Reduce 工作流程理解
+title: Map-Reduce工作流程理解
 categories: [Bigdata, Hadoop]
 description: Describe workflow of MRv1, Difference for MRv2
 keywords: Map-Reduce
