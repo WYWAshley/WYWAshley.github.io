@@ -6,8 +6,6 @@ description: Describe workflow of MRv1, Difference for MRv2
 keywords: Map-Reduce
 ---
 
-Content here
-
 本文详细的说明了 MapReduce 的工作框架和流程，以及介绍了 MapReduce 2.0的区别。最后在先前搭载的 Hadoop 集群中实现了 Python 词频统计程序。
 
 MapReduce 计算模型实现数据处理时，应用程序开发者只需要负责 Map 函数和 Reduce 函数的实现，而不需要处理分布式和并行编程中的各种复杂问题。如分布式存储、分布式通信、任务调度、容错处理、负载均衡、数据可靠等，这些问题都由 Hadoop MapReduce 框架负责处理，应用开发者只需要负责完成 Map 函数与 Reduce 函数的实现。
@@ -56,10 +54,11 @@ MapReduce 的实际处理过程可以分解为 Input、Map、Sort、Combine、Pa
 
 * 在文件被读入的时候调用的是 Inputformat 方法读入的。InputFormat —> RecordReader —> Read(k, v) （行，行内容）  -> map（变成真正的key-value） -> context.Write -> OutputCollector -> shuffle -> reduce -> OutputFormat -> RecordWriter -> Write(k, v)。
   
+  
 
 ## 二、流程详细
 
-#### 1. Input 阶段
+### 1. Input 阶段
 
 Input 是输入文件的存储位置，注意这里不一定是 HDFS 分布式文件系统位置，默认是HDFS文件系统，也可以修改为本机上的文件位置。
 <img src="/images/posts/Map-Reduce/input.jpg" alt="Input" />
@@ -104,7 +103,7 @@ public int run(String[] args) throws Exception {
 
 ④ TaskTracker 每隔一段时间会给 JobTracker 发送一个心跳，告诉 JobTracker 它依然在运行，同时心跳中还携带着很多的信息，比如当前 map 任务完成的进度等信息。当 JobTracker 收到作业的最后一个任务完成信息时，便把该作业设置成“成功”。当 JobClient 查询状态时，它将得知任务已完成，便显示一条消息给用户。
 
-###### 
+
 
 ### 3. Shuffle 阶段
 
@@ -117,6 +116,8 @@ public int run(String[] args) throws Exception {
 ⑦ 当 Map tasks 成功结束时，他们会通知负责的 tasktracker, 然后消息通过 jobtracker 的 heartbeat 传给 jobtracker. 这样，对于每一个 job, jobtracker 知道 map output 和 map tasks 的关联。Reducer 内部有一个 thread 负责定期向 jobtracker 询问 map output 的位置，直到 reducer 得到所有它需要处理的 map output 的位置。
 
 ⑧ Reducer 的另一个 thread 会把拷贝过来的 map output file 合并成更大的 file。 如果 map task 被 configure 成需要对 map output 进行压缩，那 reduce 还要对 map 结果进行解压缩。当一个 reduce task 所有的 map output 都被拷贝到一个它的 host上时，reduce 就要开始对他们排序了。
+
+
 
 ### 4. Reduce 阶段
 
@@ -132,12 +133,14 @@ public int run(String[] args) throws Exception {
 
 Hadoop框架的自身问题限制了集群的发展。首先是，JobTracker 和 NameNode 的单点问题，严重制约了集群的扩展和可靠性。其次，MapReduce采用了基于slot的资源分配模型，slot是一种粗粒度的资源 划分单位，通常一个任务不会用完槽位对应的资源，且其他任务也无法使用这些空闲资源,同时map的槽位和reduce的槽位是不可以通用的。会导致部分资源紧张，部分资源空闲。
 
-<figure class="half">
+<center class="half">
     <img src="/images/posts/Map-Reduce/1.png" />
     <img src="/images/posts/Map-Reduce/2.png" />
-</figure>
+</center>
 
 所以 Yarn框架 应运而生。
+
+
 
 ### 1. 模块分析
 
