@@ -1,9 +1,9 @@
 ---
 layout: post
 title: 样条插值的定义
-categories: [cate1, cate2]
+categories: [Stastics]
 description: 样条插值的定义
-keywords: keyword1, keyword2
+keywords: interpolation, stastics
 ---
 介绍了如何样条插值。
 
