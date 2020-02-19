@@ -90,7 +90,7 @@ DataFrame的前身是SchemaRDD，从Spark 1.3.0开始SchemaRDD更名为DataFrame
 
 ### 4.3． DataFrame与RDD的优缺点
 
-#### **4.3.1RDD的优缺点：**
+#### **4.3.1 RDD的优缺点：**
 
 **优点:**
 
@@ -110,7 +110,7 @@ DataFrame的前身是SchemaRDD，从Spark 1.3.0开始SchemaRDD更名为DataFrame
 
 <br/>
 
-#### **4.3.2DataFrame**的优缺点：
+#### **4.3.2 DataFrame**的优缺点：
 
 **优点：**
 
