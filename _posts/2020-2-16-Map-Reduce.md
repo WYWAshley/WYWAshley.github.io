@@ -194,10 +194,6 @@ Hadoop框架的自身问题限制了集群的发展。首先是，JobTracker 和
 
 &nbsp;
 
-## 四、词频统计例子
-
-
-
 
 
 参考资料：
@@ -206,7 +202,6 @@ Hadoop框架的自身问题限制了集群的发展。首先是，JobTracker 和
 2. 《[Hadoop MapReduce工作流程](http://c.biancheng.net/view/3626.html)》
 3. 《[MapReduce工作流程最详细解释](https://www.jianshu.com/p/461f86936972)》
 4. 《[Yarn框架深入理解](https://www.jianshu.com/p/bac54467ac3a)》
-5. 《[]()》
 
 
 
