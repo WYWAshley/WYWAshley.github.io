@@ -26,7 +26,7 @@ keywords: PySpark, cheatsheet，RDD，SparkSQL
 
 &emsp;&emsp;Shark是一个为Spark设计的大规模数据仓库系统，它与Hive兼容。Shark建立在Hive的代码基础上，并通过将Hive的部分物理执行计划交换出来。这个方法使得Shark的用户可以加速Hive的查询，但是Shark继承了Hive的大且复杂的代码使得Shark很难优化和维护，同时Shark依赖于Spark的版本。随着我们遇到了性能优化的上限，以及集成SQL的一些复杂的分析功能，我们发现Hive的MapReduce设计的框架限制了Shark的发展。在2014年7月1日的Spark Summit上，Databricks宣布终止对Shark的开发，将重点放到Spark SQL上。
 
-### 3.2． 什么是Spark SQL** 
+### 3.2． 什么是Spark SQL
 
 &emsp;&emsp;Spark SQL是Spark用来处理结构化数据的一个模块，它提供了一个编程抽象叫做DataFrame并且作为分布式SQL查询引擎的作用。
 
@@ -58,7 +58,7 @@ keywords: PySpark, cheatsheet，RDD，SparkSQL
 
 ## 四、DataFrame
 
-### 4.1． 什么是DataFrame**
+### 4.1． 什么是DataFrame
 
 DataFrame的前身是SchemaRDD，从Spark 1.3.0开始SchemaRDD更名为DataFrame。与SchemaRDD的主要区别是：DataFrame不再直接继承自RDD，而是自己实现了RDD的绝大多数功能。你仍旧可以在DataFrame上调用rdd方法将其转换为一个RDD。
 
@@ -66,7 +66,7 @@ DataFrame的前身是SchemaRDD，从Spark 1.3.0开始SchemaRDD更名为DataFrame
 
 <br/>
 
-### 4.2． DataFrame与RDD的区别**
+### 4.2． DataFrame与RDD的区别
 
 &emsp;&emsp;RDD可看作是分布式的对象的集合，Spark并不知道对象的详细模式信息，DataFrame可看作是分布式的Row对象的集合，其提供了由列组成的详细模式信息（就是列的名称和类型），使得Spark SQL可以进行某些形式的执行优化。DataFrame和普通的RDD的逻辑框架区别如下所示：
 
