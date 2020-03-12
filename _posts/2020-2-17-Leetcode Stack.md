@@ -1,3 +1,13 @@
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+inlineMath: [['$','$']]
+}
+});
+</script>
+
 ---
 layout: post
 title: Stack Summary
@@ -8,15 +18,7 @@ keywords: Leetcode, Stack
 
 力扣网站上关于 Stack 问题做一个总结
 
-<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-tex2jax: {
-skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-inlineMath: [['$','$']]
-}
-});
-</script>
+
 
 
 #### [173. 二叉搜索树迭代器](https://leetcode-cn.com/problems/binary-search-tree-iterator/)
