@@ -1,10 +1,18 @@
----
+<script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+tex2jax: {
+skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+inlineMath: [['$','$']]
+}
+});
+</script>
+
 layout: post
 title: 盒子放球类问题总结（斯特林数）
 categories: [mathematics]
 description: 关于盒子中放球类问题的总结说明，并介绍了斯特林数
 keywords: 斯特林数, 统计学
----
 
 2020年美团数据分析笔试题第10道
 
