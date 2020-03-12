@@ -6,6 +6,8 @@ description: SQL查询优化，包括explain，日志，索引的使用
 keywords: SQL Index
 ---
 
+包括SQL查询优化的各种内容
+
 ### SQL性能下降的原因
 
 * 查询语句不行，没建立索引
