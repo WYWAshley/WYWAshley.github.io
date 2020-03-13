@@ -58,7 +58,7 @@ else:
 $$
 f = \begin{cases}
 0 & n<m \\
-{C_{n-m}^{m}} & n>=m
+{C_{n-1}^{m-1}} & n>=m
 \end{cases}
 $$
 
