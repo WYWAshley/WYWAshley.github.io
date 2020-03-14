@@ -71,3 +71,86 @@ innoDB和Myisam 区别在于支持事务，采用行级锁
 * ```show status like 'innodb_row_lock%'``` 中的 ==InnoDB_row_lock_waits== 代表行锁冲突次数， ==Innodb_row_lock_current_waits== 正在等待锁定的数量。可以用 ```show profile;```查看为什么有那么多锁
 
 ![image-20200313215132343](C:\Users\yuwen\AppData\Roaming\Typora\typora-user-images\image-20200313215132343.png)
+
+<br/>
+
+## 乐观锁
+
+* 悲观锁
+
+  当我们要对一个数据库中的一条数据进行修改的时候，为了避免同时被其他人修改，最好的办法就是直接对该数据进行加锁以防止并发。这种借助数据库锁机制，在修改数据之前先锁定，再修改的方式被称之为悲观并发控制（又名“悲观锁”，Pessimistic Concurrency Control，缩写“PCC”）。之所以叫做悲观锁，是因为这是一种对数据的修改抱有悲观态度的并发控制方式。我们一般认为数据被并发修改的概率比较大，所以需要在修改之前先加锁。
+
+​		悲观并发控制实际上是==“先取锁再访问”==的保守策略，为数据处理的安全提供了保证。
+
+![img](https:////upload-images.jianshu.io/upload_images/7038163-ad9ab26f89441936.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/1080/format/webp)
+
+​			但是在效率方面，处理加锁的机制会让数据库产生额外的开销，还有增加产生死锁的机会。另外			还会降低并行性，一个事务如果锁定了某行数据，其他事务就必须等待该事务处理完才可以处理			那行数据。
+
+<br/>
+
+* 乐观锁
+
+  乐观锁是相对悲观锁而言，也是为了避免数据库幻读、业务处理时间过长等原因引起数据处理错误的一种机制，但乐观锁不会刻意使用数据库本身的锁机制，而是依据数据本身来保证数据的正确性。
+
+  相对于悲观锁，在对数据库进行处理的时候，乐观锁并不会使用数据库提供的锁机制。一般的实现乐观锁的方式就是记录数据版本。
+
+![img](https:////upload-images.jianshu.io/upload_images/7038163-84c84ddc91cf6a1b.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/640/format/webp)
+
+​		乐观并发控制相信事务之间的数据竞争(data race)的概率是比较小的，因此尽可能直接做下去，		==直到提交的时候才去锁定==，所以不会产生任何锁和死锁。
+
+<br/>
+
+* 悲观锁实现方式
+
+  上述说的表级锁、行级锁都是悲观锁的实现，不再赘述
+
+  <br/>
+
+* 乐观锁实现方式
+
+  使用乐观锁就不需要借助数据库的锁机制了。
+
+  乐观锁的概念中其实已经阐述了它的具体实现细节。主要就是两个步骤：==冲突检测和数据更新==。其实现方式有一种比较典型的就是**CAS(Compare and Swap)**。
+
+  CAS是项乐观锁技术，当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败，失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。比如扣减库存问题，通过乐观锁可以实现如下：
+
+![img](https:////upload-images.jianshu.io/upload_images/7038163-623702054ade5d92.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/490/format/webp)
+
+<br/>
+
+* 乐观锁使用
+
+  以上，我们在更新之前，先查询一下库存表中当前库存数（quantity），然后在做update的时候，以库存数作为一个修改条件。当我们提交更新的时候，判断数据库表对应记录的当前库存数与第一次取出来的库存数进行比对，如果数据库表当前库存数与第一次取出来的库存数相等，则予以更新，否则认为是过期数据。
+
+  以上更新语句存在一个比较重要的问题，即传说中的**ABA问题**。
+
+  比如说一个线程one从数据库中取出库存数3，这时候另一个线程two也从数据库中取出库存数3，并且two进行了一些操作变成了2，然后two又将库存数变成3，这时候线程one进行CAS操作发现数据库中仍然是3，然后one操作成功。尽管线程one的CAS操作成功，但是不代表这个过程就是没有问题的。
+
+![img](https:////upload-images.jianshu.io/upload_images/7038163-796cf21addd6659b.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/640/format/webp)
+
+* 版本控制
+
+  有一个比较好的办法可以解决ABA问题，那就是通过一个单独的可以顺序递增的==version字段==。乐观锁每次在执行数据的修改操作时，都会带上一个版本号，一旦版本号和数据的版本号一致就可以执行修改操作并对版本号执行+1操作，否则就执行失败。因为每次操作的版本号都会随之增加，所以不会出现ABA问题，因为版本号只会增加不会减少。改为以下方式即可：
+
+  除了version以外，还可以使用时间戳，因为==时间戳==天然具有顺序递增性。
+
+![img](https:////upload-images.jianshu.io/upload_images/7038163-2b98e0c34958d656.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/631/format/webp)
+
+![img](https:////upload-images.jianshu.io/upload_images/7038163-416aa2fdc4392d1c.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/640/format/webp)
+
+* 减小乐观锁粒度
+   以上SQL其实还是有一定的问题的，就是一旦遇上高并发的时候，就只有一个线程可以修改成功，那么就会存在大量的失败。对于像淘宝这样的电商网站，高并发是常有的事，总让用户感知到失败显然是不合理的。所以，还是要想办法减少乐观锁的粒度的。
+
+  有一条比较好的建议，可以减小乐观锁力度，最大程度的提升吞吐率，提高并发能力！如下：
+
+![img](https:////upload-images.jianshu.io/upload_images/7038163-f176266a4a5136d6.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/427/format/webp)
+
+* 如何选择
+
+  在乐观锁与悲观锁的选择上面，主要看下两者的区别以及适用场景就可以了。
+
+  乐观锁并未真正加锁，效率高。一旦锁的粒度掌握不好，更新失败的概率就会比较高，容易发生业务失败。
+
+  悲观锁依赖数据库锁，效率低。更新失败的概率比较低。
+
+  随着互联网三高架构（高并发、高性能、高可用）的提出，悲观锁已经越来越少的被使用到生产环境中了，尤其是并发量比较大的业务场景。
