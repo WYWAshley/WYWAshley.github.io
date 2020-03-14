@@ -1,3 +1,13 @@
+---
+layout: post
+title: MySQL Grammar
+categories: [SQL, Database]
+description: examples of MySQL DDL
+keywords: MySQL, DDL
+---
+
+记录一些 MySQL 的语句书写格式
+
 ## 一、查看表结构
 
 ​	表结构就是定义数据表文件名，确定数据表包含哪些字段，各字段的字段名、字段类型、及宽度，并将这些数据输入到计算机当中。
