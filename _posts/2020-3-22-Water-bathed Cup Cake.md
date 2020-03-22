@@ -8,9 +8,9 @@ keywords: bake, cake
 
 棉花纸杯蛋糕（水浴烫面法）
 
-<img src="/images/posts/Water-bathed Cup Cake/1.jpg"/>
-
 <img src="/images/posts/Water-bathed Cup Cake/2.jpg"/>
+
+<img src="/images/posts/Water-bathed Cup Cake/1.jpg"/>
 
 * 用料（这里的用量可以做出15个纸杯蛋糕）
 
