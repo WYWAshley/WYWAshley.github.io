@@ -38,6 +38,6 @@ keywords: 发糕
 
   7. 红枣洗净放在发酵好的面糊上面，讲究的可以用剪刀把红枣剪开去核；
 
-     <img src="/images/posts/Brown Sugar Sponge Cake/before.jpg" alt="semi-finished product" style="float:right; transform:rotate(90deg);"/>
+     <img src="/images/posts/Brown Sugar Sponge Cake/before.jpg" alt="semi-finished product"/>
 
   8. 水烧开之后放进蒸锅蒸半个小时，就可以出炉了。
