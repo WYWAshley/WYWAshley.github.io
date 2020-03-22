@@ -6,8 +6,6 @@ description: 制作棉花纸杯蛋糕（水浴烫面法）教程
 keywords: bake, cake
 ---
 
-棉花纸杯蛋糕（水浴烫面法）
-
 <img src="/images/posts/Water-bathed Cup Cake/2.jpg"/>
 
 <img src="/images/posts/Water-bathed Cup Cake/1.jpg"/>
