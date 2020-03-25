@@ -30,7 +30,7 @@ keywords: Leetcode, Stack
 
 示例：
 
-**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/25/bst-tree.png)**
+<img src="/images/posts/Leetcode Stack/1.png"/>
 
 ```
 BSTIterator iterator = new BSTIterator(root);

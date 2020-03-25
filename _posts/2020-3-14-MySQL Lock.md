@@ -82,7 +82,7 @@ innoDB和Myisam 区别在于支持事务，采用行级锁
 
 ​		悲观并发控制实际上是==“先取锁再访问”==的保守策略，为数据处理的安全提供了保证。
 
-![img](https:////upload-images.jianshu.io/upload_images/7038163-ad9ab26f89441936.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/1080/format/webp)
+<img src="/images/posts/MySQL Lock/1.jpg"/>
 
 ​			但是在效率方面，处理加锁的机制会让数据库产生额外的开销，还有增加产生死锁的机会。另外			还会降低并行性，一个事务如果锁定了某行数据，其他事务就必须等待该事务处理完才可以处理			那行数据。
 
@@ -94,7 +94,7 @@ innoDB和Myisam 区别在于支持事务，采用行级锁
 
   相对于悲观锁，在对数据库进行处理的时候，乐观锁并不会使用数据库提供的锁机制。一般的实现乐观锁的方式就是记录数据版本。
 
-![img](https:////upload-images.jianshu.io/upload_images/7038163-84c84ddc91cf6a1b.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/640/format/webp)
+<img src="/images/posts/MySQL Lock/2.jpg"/>
 
 ​		乐观并发控制相信事务之间的数据竞争(data race)的概率是比较小的，因此尽可能直接做下去，		==直到提交的时候才去锁定==，所以不会产生任何锁和死锁。
 
@@ -114,7 +114,7 @@ innoDB和Myisam 区别在于支持事务，采用行级锁
 
   CAS是项乐观锁技术，当多个线程尝试使用CAS同时更新同一个变量时，只有其中一个线程能更新变量的值，而其它线程都失败，失败的线程并不会被挂起，而是被告知这次竞争中失败，并可以再次尝试。比如扣减库存问题，通过乐观锁可以实现如下：
 
-![img](https:////upload-images.jianshu.io/upload_images/7038163-623702054ade5d92.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/490/format/webp)
+<img src="/images/posts/MySQL Lock/3.jpg"/>
 
 <br/>
 
@@ -126,7 +126,7 @@ innoDB和Myisam 区别在于支持事务，采用行级锁
 
   比如说一个线程one从数据库中取出库存数3，这时候另一个线程two也从数据库中取出库存数3，并且two进行了一些操作变成了2，然后two又将库存数变成3，这时候线程one进行CAS操作发现数据库中仍然是3，然后one操作成功。尽管线程one的CAS操作成功，但是不代表这个过程就是没有问题的。
 
-![img](https:////upload-images.jianshu.io/upload_images/7038163-796cf21addd6659b.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/640/format/webp)
+<img src="/images/posts/MySQL Lock/4.jpg"/>
 
 * 版本控制
 
@@ -134,16 +134,16 @@ innoDB和Myisam 区别在于支持事务，采用行级锁
 
   除了version以外，还可以使用时间戳，因为==时间戳==天然具有顺序递增性。
 
-![img](https:////upload-images.jianshu.io/upload_images/7038163-2b98e0c34958d656.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/631/format/webp)
+<img src="/images/posts/MySQL Lock/5.jpg"/>
 
-![img](https:////upload-images.jianshu.io/upload_images/7038163-416aa2fdc4392d1c.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/640/format/webp)
+<img src="/images/posts/MySQL Lock/6.jpg"/>
 
 * 减小乐观锁粒度
    以上SQL其实还是有一定的问题的，就是一旦遇上高并发的时候，就只有一个线程可以修改成功，那么就会存在大量的失败。对于像淘宝这样的电商网站，高并发是常有的事，总让用户感知到失败显然是不合理的。所以，还是要想办法减少乐观锁的粒度的。
 
   有一条比较好的建议，可以减小乐观锁力度，最大程度的提升吞吐率，提高并发能力！如下：
 
-![img](https:////upload-images.jianshu.io/upload_images/7038163-f176266a4a5136d6.jpg?imageMogr2/auto-orient/strip|imageView2/2/w/427/format/webp)
+<img src="/images/posts/MySQL Lock/7.jpg"/>
 
 * 如何选择
 

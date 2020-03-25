@@ -34,7 +34,7 @@ show columns from employees;
 * Default: 列的默认值
 * Extra :其它信息
 
-![这里写图片描述](https://img-blog.csdn.net/20171228124938336?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzUzODk0MTc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+<img src="/images/posts/MySQL-grammar/1.png" />
 
 ### 3. show create table 表名
 
@@ -42,7 +42,7 @@ show columns from employees;
 show create table employees;
 ```
 
-![这里写图片描述](https://img-blog.csdn.net/20171228125012524?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzUzODk0MTc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+<img src="/images/posts/MySQL-grammar/2.png" />
 
 4.use information_schema; select * from columns where table_name='表名';
 
@@ -53,7 +53,7 @@ use information_schema;
 select * from columns where table_name='employees';
 ```
 
-![这里写图片描述](https://img-blog.csdn.net/20171228125019200?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzUzODk0MTc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+<img src="/images/posts/MySQL-grammar/3.png" />
 
 <br/>
 
