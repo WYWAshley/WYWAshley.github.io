@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Activation Function 激活函数
+title: Activation Function
 categories: [machine learning, algorithm]
 description: 
 keywords: keyword1, keyword2
