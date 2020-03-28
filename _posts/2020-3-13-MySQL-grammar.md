@@ -1,14 +1,30 @@
 ---
 layout: post
-title: MySQL Grammar
-categories: [SQL, Database]
+title: MySQL基本语法
+categories: [SQL]
 description: examples of MySQL DDL
-keywords: MySQL, DDL
+keywords: MySQL
 ---
 
 记录一些 MySQL 的语句书写格式
 
-## 一、查看表结构
+## 一、数据库语言分类
+
+SQL语言共分为四大类：数据查询语言DQL，数据操纵语言DML，数据定义语言DDL，数据控制语言DCL。
+
+1. 数据查询语言DQL 基本结构是由SELECT子句，FROM子句，WHERE 子句组成的查询块；
+2. 数据操纵语言DML 主要有三种形式： 插入 INSERT， 更新 UPDATE，和 删除 DELETE；
+3. 数据定义语言DDL 用来创建数据库中的各种对象-----表、视图、 索引、同义词、聚簇等如： CREATE TABLE/VIEW/INDEX/SYN/CLUSTER，DDL操作是隐性提交的，不能rollback！！
+4. 数据控制语言DCL 用来授予或回收访问数据库的某种特权，并控制 数据库操纵事务发生的时间及效果，对数据库实行监视等。如：GRANT 授权，ROLLBACK [WORK] TO [SAVEPOINT] 回退到某一点，COMMIT [WORK] 提交。
+
+提交数据有三种类型：显式提交、隐式提交及自动提交：
+
+1. 显式提交 用COMMIT命令直接完成的提交为显式提交。其格式为： SQL>COMMIT；
+2. 隐式提交 用SQL命令间接完成的提交为隐式提交。这些命令是： ALTER，AUDIT，COMMENT，CONNECT，CREATE，DISCONNECT，DROP， EXIT，GRANT，NOAUDIT，QUIT，REVOKE，RENAME。
+3. 自动提交 若把AUTOCOMMIT设置为ON，则在插入、修改、删除语句执行后， 系统将自动进行提交，这就是自动提交。其格式为： SQL>SET AUTOCOMMIT ON;
+   <br>
+
+## 二、查看表结构
 
 ​	表结构就是定义数据表文件名，确定数据表包含哪些字段，各字段的字段名、字段类型、及宽度，并将这些数据输入到计算机当中。
 
@@ -57,7 +73,7 @@ select * from columns where table_name='employees';
 
 <br/>
 
-## 二、添加约束
+## 三、添加约束
 
 ### 1. 建表时添加约束
 
@@ -127,7 +143,7 @@ alter table goodtest change gid gid int(10);
 
 <br/>
 
-## 三、添加删除索引
+## 四、添加删除索引
 
 1. 加索引
 
@@ -156,7 +172,7 @@ alter table goodtest change gid gid int(10);
 
 <br/>
 
-## 四、修改列
+## 五、修改列
 
 1. 修改列名
 
