@@ -1,10 +1,12 @@
 ---
 layout: post
 title: 六寸红糖发糕
-categories: [bake]
-description: 记录一次成功的六寸红糖发糕制作过程
+categories: [烘焙]
+description: 
 keywords: 发糕
 ---
+
+记录一次成功的六寸红糖发糕制作过程
 
 <img src="/images/posts/Brown Sugar Sponge Cake/after.jpg" alt="finished product"/>
 
