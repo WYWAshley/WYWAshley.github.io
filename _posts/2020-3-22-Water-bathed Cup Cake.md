@@ -3,8 +3,10 @@ layout: post
 title: 棉花纸杯蛋糕（水浴烫面法）
 categories: [bake]
 description: 制作棉花纸杯蛋糕（水浴烫面法）教程
-keywords: bake, cake
+keywords: 烘焙
 ---
+
+制作棉花纸杯蛋糕（水浴烫面法）教程
 
 <img src="/images/posts/Water-bathed Cup Cake/2.jpg"/>
 
@@ -30,4 +32,4 @@ keywords: bake, cake
   6. 先把三分之一的蛋白放入蛋黄浆里面，切拌均匀；
   7. 然后把蛋黄浆全部倒入剩下的蛋白盆里，切拌均匀；
   8. 预热烤箱170度，烤盘里面装满水，将糊糊分杯；
-  9. 放进烤箱18分钟左右就差不多可以拿出来吃啦。
+  9. 放进烤箱18-20分钟左右就差不多可以拿出来吃啦。
