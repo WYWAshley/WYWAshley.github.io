@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 查询优化
+title: MySQL查询优化
 categories: [SQL]
 description: SQL查询优化，包括explain，日志，索引的使用
 keywords: SQL Index
@@ -8,7 +8,9 @@ keywords: SQL Index
 
 包括SQL查询优化的各种内容
 
-### SQL性能下降的原因
+MySQL 中利用索引、日志查询、explain等工具进行优化查询
+
+### MySQL性能下降的原因
 
 * 查询语句不行，没建立索引
 * 索引失效，建立了没用上（单值索引、复合索引）
