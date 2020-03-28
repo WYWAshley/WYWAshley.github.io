@@ -3,7 +3,7 @@ layout: post
 title: 信息论
 categories: [machine learning, Algorithm]
 description: What's Entropy for?
-keywords: Entropy
+keywords: Information Entropy
 ---
 
 介绍各种熵的概念和意义
