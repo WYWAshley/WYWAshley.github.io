@@ -1,14 +1,12 @@
 ---
 layout: post
-title: MySQL Lock
-categories: [SQL, Database]
-description: 关于MySQL两种存储引擎MyIsam和InnoDB的数据库锁介绍
+title: MySQL锁
+categories: [SQL]
+description: 
 keywords: MyIsam, InnoDB, Lock
 ---
 
-锁是计算机协调多个进程或线程并发访问某一资源的机制
-
-在数据库中，除传统的计算资源（如CPU、RAM、I/O等）的争用以外，数据也是一种供许多用户共享的资源。
+介绍 MySQL 数据库的两种存储引擎 MyIsam 和 InnoDB 处理事务时对数据加的锁
 
 ## 表锁（以MyIsam为例）
 
