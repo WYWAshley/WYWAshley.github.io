@@ -1,9 +1,9 @@
 ---
 layout: post
 title: 棉花纸杯蛋糕（水浴烫面法）
-categories: [bake]
+categories: [烘焙]
 description: 制作棉花纸杯蛋糕（水浴烫面法）教程
-keywords: 烘焙
+keywords: 棉花纸杯蛋糕
 ---
 
 制作棉花纸杯蛋糕（水浴烫面法）教程
