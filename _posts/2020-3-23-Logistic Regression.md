@@ -1,7 +1,7 @@
 ---
 layout: post
-title: 逻辑回归
-categories: [machine learning, algorithm]
+title: 逻辑回归和逻辑斯蒂函数
+categories: [机器学习, 算法]
 description: understand why logistic regression
 keywords: logistic regression
 ---
