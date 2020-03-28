@@ -2,9 +2,11 @@
 layout: post
 title: 不相邻问题
 categories: [组合数]
-description: 不相邻排座位问题
+description: 
 keywords: 
 ---
+
+介绍不相邻排座位问题
 
 ### 链式不相邻问题：
 
