@@ -1,0 +1,208 @@
+
+
+# mysql 全文索引
+
+
+
+## 作用
+
+MySQL索引可以分为：主键索引、普通索引、唯一索引、全文索引。
+
+　　一般情况，对于模糊查询的情况最容易想到的就是 where ... like %_... 这样。确实，like 关键字在大都数情况下都能完成需求，但是在列的内容十分大的时候，like 的性能就不能令人满意了，因为 like 关键字并没有保证每次查询都能用上索引。思考一下，如果我们需要查找以“xxx”开头的文章，那么使用 like ”xxx%“ 的确是可以使用B+树索引，但是实际场景中我们通常需要查找包含”xxx“的文章，那么此时 like ”%xxx%“ 就不能使用索引提高性能了。因此，全文索引就派上用场。除了性能上的提高，全文索引提供了更灵活的服务，比如：
+
+　　1. like 只是进行模式匹配，全文索引却提供了一些语法语义的查询功能，会将要查的字符串进行分词操作，这决定于MySQL的词库。
+
+　　2. 全文索引可以自己设置词语的最小、最大长度，要忽略的词，这些都是可以设置的。
+
+　　3. 用全文索引去某个列查一个字符串，会返回匹配度，可以理解为匹配的关键字个数，是个浮点数。
+
+总之，全文索引因为用上了**索引**，性能更高，有词库支撑可以进行分词提供了一些**语义查询**的功能，有**词语停用表**忽略某些词语，有**词语最大最小值**可以设置等更灵活。
+
+##  原理
+
+全文索引的对象是一个“全文集合”，如果对表的多个列建立全文索引，MySQL就会将这几列拼接成一个字符串，然后进行索引。
+
+全文索引实际上也是B+ Tree结构，不过比较特殊，它是倒排，倒排的索引采用了B+索引。它一共有两层，第一层是所有的关键字，第二层则是每个关键字的一组指文档针，例如 “X” ->行1，行2，行3......。通俗解释全文索引结构就是：它是**以关键字去找文档（行）**，而不是像其他一些索引以行主键来找其他列的内容。如下是一个全文索引辅助表的例子：
+
+*全文检索表*
+
+| DocumentID |                  Text                   |
+| :--------: | :-------------------------------------: |
+|     1      | Pease porridge hot, pease porridge cold |
+|     2      |        Pease porridge in the hot        |
+|     3      |              Nine days old              |
+|     4      |   Some like it hot,some like it cold    |
+|     5      |         some like it in the hot         |
+|     6      |              Nide days old              |
+
+*inverted file index 的关联数组*
+
+| Number | Text | Documents | Number | Text     | Documents |
+| ------ | ---- | --------- | ------ | -------- | --------- |
+| 1      | code | 1，4      | 8      | old      | 3，6      |
+| 2      | days | 3，6      | 9      | pease    | 1，2      |
+| 3      | hot  | 1，4      | 10     | porridge | 1，2      |
+| 4      | in   | 2，5      | 11     | pot      | 2，5      |
+| 5      | it   | 4，5      | 12     | some     | 4，5      |
+| 6      | like | 4，5      | 13     | the      | 2，5      |
+| 7      | nine | 3，6      |        |          |           |
+
+
+
+要使用全文索引，关于它的几个参数的意义一定要清楚，控制全文索引的参数都是以 ft 开头的（FullText）。这些参数不可以被动态修改，只能修改 mysql 的配置文件。修改之后需要运行 repair table test quick;     查看这些参数以及它们的意义：
+
+![image-20210313160810663](/Users/wuyuwen/Library/Application Support/typora-user-images/image-20210313160810663.png)
+
+ft_boolean_syntax：表示布尔查询时的可以用的符号。改变IN BOOLEAN MODE的查询字符，不用重新启动MySQL也不用重建索引
+
+ft_max_word_len : 最长的索引字符串，默认值为84，修改后要重建索引
+
+ft_min_word_len  : 最短的索引字符串，默认值为4，修改后要重建索引
+
+ft_query_expansion_limit: 查询括展时取最相关的几个值用作二次查询
+
+ft_stopword_file  (built-in): 停词文件，这个文件里的词查询时会忽略掉
+
+## 负面影响
+
+全文索引带来的负面影响：
+
+　　1. 占有存储空间更大，如果内存一次装不下全部索引，性能会非常差。
+
+　　2. 增删改代价更大，修改文本中10个单词，则要操作维护索引10次，而不是普通索引的一次，所以建议先添加数据再创建索引。
+
+　　3. 如果一个列上有全文索引则一定会用上，即使有性能更好的其他索引也不会用上。由于只是存储文档指针，也就用不上索引覆盖。
+
+总之就是性能不如普通索引，使用时要衡量一下。
+
+## 操作
+
+### 创建
+
+创建表时创建全文索引
+
+```sql
+create table fulltext_test (
+    id int(11) NOT NULL AUTO_INCREMENT,
+    content text NOT NULL,
+    tag varchar(255),
+    PRIMARY KEY (id),
+    FULLTEXT KEY content_tag_fulltext(content,tag)  // 创建联合全文索引列
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+```
+
+通过 ALTER TABLE 创建全文索引
+
+```
+alter table fulltst_test add fulltext index content_tag_fulltext(content,tag);
+```
+
+在已存在的表上创建全文索引
+
+```sql
+create fulltext index content_tag_fulltext on fulltext_test(content, tag);
+```
+
+### 删除
+
+直接使用 DROP INDEX 删除全文索引（不修改全文索引，直接删除重建）
+
+```
+drop index content_tag_fulltext on fulltext_test;
+```
+
+通过 ALTER TABLE 删除全文索引
+
+```
+alter table fulltext_test drop index content_tag_fulltext;
+```
+
+### 使用索引
+
+和常用的模糊匹配使用 like + % 不同，全文索引有自己的语法格式，使用 match 和 against 关键字，比如
+
+```
+select * from fulltext_test match(content, tag) against("xxx xxx");
+```
+
+
+注意： 
+
+<u>match() 函数中指定的列必须和全文索引中指定的列完全相同，否则就会报错，无法使用全文索引</u>，这是因为全文索引不会记录关键字来自哪一列。如果想要对某一列使用全文索引，请单独为该列创建全文索引。
+
+查找的单词长度需要满足 ft_max_word_len，ft_min_word_len 之间。
+
+
+
+## 全文索引种类
+
+### 自然语言的全文索引
+
+默认情况下，或者使用 in natural language mode 修饰符时，match() 函数对文本集合执行自然语言搜索。
+
+自然语言搜索引擎将计算每一个文档对象和查询的相关度。这里，相关度是基于匹配的关键词的个数，以及关键词在文档中出现的次数。在整个索引中出现次数越少的词语，匹配时的相关度就越高。相反，非常常见的单词将不会被搜索，如果一个词语的在超过 50% 的记录中都出现了，那么自然语言的搜索将不会搜索这类词语。这个机制也比较好理解，比如说，一个数据表存储的是一篇篇的文章，文章中的常见词、语气词等等，出现的肯定比较多，搜索这些词语就没什么意义了，需要搜索的是那些文章中有特殊意义的词，这样才能把文章区分开。
+
+### 布尔全文索引
+
+在布尔搜索中，我们可以在查询中自定义某个被搜索的词语的相关性，当编写一个布尔搜索查询时，可以通过一些前缀修饰符来定制搜索。
+
+MySQL 内置的修饰符，上面查询最小搜索长度时，搜索结果 ft_boolean_syntax 变量的值就是内置的修饰符，下面简单解释几个，更多修饰符的作用可以查手册修饰符：+ 必须包含该词，- 必须不包含该词，> 提高该词的相关性，查询的结果靠前，< 降低该词的相关性，查询的结果靠后，* 通配符，只能接在词后面。
+
+```
+select * test where match(content) against('a*' in boolean mode);
+```
+
+MySQL 的全文索引最开始仅支持英语，因为英语的词与词之间有空格，使用空格作为分词的分隔符是很方便的。亚洲文字，比如汉语、日语、汉语等，是没有空格的，这就造成了一定的限制。不过 MySQL 5.7.6 开始，引入了一个 ngram 全文分析器来解决这个问题，并且对 MyISAM 和 InnoDB 引擎都有效。
+
+事实上，MyISAM 存储引擎对全文索引的支持有很多的限制，例如表级别锁对性能的影响、数据文件的崩溃、崩溃后的恢复等，这使得 MyISAM 的全文索引对于很多的应用场景并不适合。所以，多数情况下的建议是使用别的解决方案，例如 Sphinx、Lucene 等等第三方的插件，亦或是使用 InnoDB 存储引擎的全文索引。
+
+### 查询扩展全文索引
+
+全文搜索支持查询扩展。当搜索短语太短时，这通常很有用，这通常意味着用户依赖于全文搜索引擎所隐含的知识。例如，搜索“database”的用户可能实际上意味着“MySQL”，“Oracle”，“DB2”和“RDBMS”都是应该与“database”匹配的短语，并且也应该返回。
+
+通过在搜索短语之后添加WITH QUERY EXPANSION或IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION来启用盲查询扩展（也称为自动相关性反馈）。它通过执行两次搜索来工作，首先，MySQL全文搜索引擎会查找与搜索查询匹配的所有行。其次，它检查搜索结果中的所有行，并找到相关词，然后二次搜索，但是基于相关词而不是用户提供的原始关键词来查询匹配。
+
+由于查询扩展往往会返回非相关文档，因此仅在搜索短语较短时才使用它。
+
+以下示例显示了这种差异：
+
+```
+mysql> show create table articles\G;
+*************************** 1. row ***************************
+       Table: articles
+Create Table: CREATE TABLE `articles` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(200) DEFAULT NULL,
+  `body` text,
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `title` (`title`,`body`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8
+1 row in set (0.00 sec)
+
+mysql> select * from articles
+    -> where match(title,body)
+    -> against('database' in natural language mode);
++----+-------------------+------------------------------------------+
+| id | title             | body                                     |
++----+-------------------+------------------------------------------+
+|  1 | MySQL Tutorial    | DBMS stands for DataBase ...             |
+|  5 | MySQL vs. YourSQL | In the following database comparison ... |
++----+-------------------+------------------------------------------+
+2 rows in set (0.00 sec)
+
+mysql> select * from articles
+    -> where match(title,body)
+    -> against('database' in natural language mode with query expansion);		//包含MySQL的也被返回
++----+-----------------------+------------------------------------------+
+| id | title                 | body                                     |
++----+-----------------------+------------------------------------------+
+|  5 | MySQL vs. YourSQL     | In the following database comparison ... |
+|  1 | MySQL Tutorial        | DBMS stands for DataBase ...             |
+|  3 | Optimizing MySQL      | In this tutorial we will show ...        |
+|  6 | MySQL Security        | When configured properly, MySQL ...      |
+|  4 | 1001 MySQL Tricks     | 1. Never run mysqld as root. 2. ...      |
+|  2 | How To Use MySQL Well | After you went through a ...             |
++----+-----------------------+------------------------------------------+
+6 rows in set (0.00 sec)
+```
+
